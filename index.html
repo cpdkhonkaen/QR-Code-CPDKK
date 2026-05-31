@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code CPDKK</title>
+    <title>QR Code Generator Pro</title>
     <!-- [ข้อ 4] โหลด Tailwind แบบ async ไม่บล็อก render -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -466,18 +466,20 @@
         // [ข้อ 2] ระบบนับและแสดง Page View
         // ==========================================
         function trackAndShowPageView() {
-            google.script.run
-                .withSuccessHandler(function(total) {
-                    var el = document.getElementById('visitor-count');
-                    if (el) {
-                        el.innerHTML = Number(total).toLocaleString('th-TH');
-                    }
-                })
-                .withFailureHandler(function() {
-                    var el = document.getElementById('visitor-count');
-                    if (el) el.innerHTML = '-';
-                })
-                .trackPageView();
+            try {
+                // นับจำนวนผู้เข้าชมด้วย localStorage (ทำงานได้บน GitHub Pages)
+                var KEY   = 'qrcpdkk_pageviews';
+                var count = parseInt(localStorage.getItem(KEY) || '0', 10);
+                count += 1;
+                localStorage.setItem(KEY, count);
+
+                var el = document.getElementById('visitor-count');
+                if (el) el.innerHTML = Number(count).toLocaleString('th-TH');
+            } catch(e) {
+                // กรณี localStorage ไม่พร้อม (private mode ฯลฯ)
+                var el = document.getElementById('visitor-count');
+                if (el) el.innerHTML = '-';
+            }
         }
 
         // ==========================================
