@@ -101,7 +101,7 @@
                     </h2>
 
                     <!-- กลุ่มงาน + ชื่อ QR Code -->
-                    <div id="group-name-block" class="mb-4 relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3" style="display:none;">
+                    <div class="mb-4 relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -131,9 +131,9 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                                ชื่อ QR Code <span class="text-red-400">*</span>
+                                ชื่อ QR Code
                             </label>
-                            <input type="text" id="qr-name" placeholder="กรุณาตั้งชื่อ QR นี้ก่อนบันทึก" oninput="this.classList.remove('ring-red-400');this.classList.add('ring-emerald-200');" class="w-full px-4 py-2.5 rounded-xl border-0 ring-2 ring-emerald-200 focus:ring-emerald-400 outline-none transition-all text-sm font-medium bg-white/80">
+                            <input type="text" id="qr-name" placeholder="ตั้งชื่อเพื่อความจำง่าย..." class="w-full px-4 py-2.5 rounded-xl border-0 ring-2 ring-emerald-200 focus:ring-emerald-400 outline-none transition-all text-sm font-medium bg-white/80">
                         </div>
                     </div>
                     <!-- /กลุ่มงาน + ชื่อ QR Code -->
@@ -412,9 +412,9 @@
         <p class="text-[10px] sm:text-xs text-gray-400 font-medium"><span class="font-bold theme-text">นายนิธิกร เสริมปรุงสุข</span> นักวิชาการสหกรณ์ &nbsp;|&nbsp; เวอร์ชัน 1.0 &nbsp;|&nbsp; สงวนลิขสิทธิ์ &copy; 2026</p>
     </footer>
 
-    <!-- [ข้อ 4] โหลด Library หลักแบบ defer เพื่อไม่บล็อก first paint -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js" defer></script>
+    <!-- โหลด Library หลัก — ไม่ใช้ defer เพราะ Google Apps Script HtmlService ไม่รองรับ -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
     <script>
         // จำลองการเรียกฟังก์ชัน (Mock runner) สำหรับการดูพรีวิวแบบ Standalone
@@ -427,7 +427,7 @@
                     this.setupSheet = function() { setTimeout(function() { if(sCb) sCb({ success: true, message: 'ติดตั้งสำเร็จ' }); }, 1000); };
                     this.saveSettings = function(d) { setTimeout(function() { if(sCb) sCb({ success: true, message: 'บันทึกสำเร็จ' }); }, 1000); };
                     this.testConnection = function(d) { setTimeout(function() { if(sCb) sCb({ drive: true, driveMsg: 'เชื่อมต่อสำเร็จ' }); }, 1000); };
-                    this.getScanStats = function() { setTimeout(function() { if(sCb) sCb([["QR เว็บไซต์หลัก", "เว็บไซต์", "กจส.", "https://khonkaen.web.cpd.go.th/", "01/01/2026", "https://drive.google.com/", "12345abcde", "REF001"], ["QR ชำระเงิน", "พร้อมเพย์", "ฝบท.", "0812345678", "02/01/2026", "", "", "REF002"]]); }, 500); };
+                    this.getScanStats = function() { setTimeout(function() { if(sCb) sCb([["QR เว็บหน่วยงาน", "เว็บไซต์", "กจส.", "https://khonkaen.web.cpd.go.th/", "01/01/2026", "https://drive.google.com/", "12345abcde", "REF001"], ["QR พร้อมเพย์", "พร้อมเพย์", "ฝบท.", "0812345678", "02/01/2026", "", "", "REF002"]]); }, 500); };
                     this.uploadToDriveAndTrack = function(b, t, type, grp, name) { setTimeout(function() { if(sCb) sCb({ success: true }); }, 1500); };
                     this.verifyLogin = function(pwd) { setTimeout(function() { if(sCb) { if(pwd==='welcome@3k') sCb({success:true,role:'admin'}); else if(pwd==='cpdkk') sCb({success:true,role:'user'}); else sCb({success:false,message:'รหัสไม่ถูกต้อง'}); } }, 500); };
                     this.getPresetLogoBase64 = function(id) { setTimeout(function() { if(sCb) sCb('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'); }, 800); };
@@ -444,11 +444,16 @@
         var qrCode = null;
         var currentUserRole = 'guest';
 
-        // [ข้อ 4] init ระบบทั้งหมดหลัง defer scripts โหลดครบ
+        // init ระบบทั้งหมด — scripts โหลด synchronous แล้ว จึงพร้อมใช้งานทันที
         function initApp() {
+            if (typeof Swal === 'undefined' || typeof QRCodeStyling === 'undefined') {
+                // fallback: รอในกรณีที่ยังโหลดไม่เสร็จ
+                setTimeout(initApp, 100);
+                return;
+            }
             Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
             qrCode = new QRCodeStyling({ 
-                width: 220, height: 220,   // [ข้อ 3] ลด preview size ลงให้พอดี
+                width: 220, height: 220,
                 type: "svg", 
                 dotsOptions: { type: "rounded" }, 
                 backgroundOptions: { color: "#ffffff" }, 
@@ -459,24 +464,11 @@
             loadPresetLogos();
         }
 
-        // [ข้อ 4] รอ defer scripts ก่อน init
+        // เรียก initApp เมื่อ DOM พร้อม (scripts โหลดแบบ synchronous แล้ว)
         if (document.readyState === 'loading') {
-            window.addEventListener('DOMContentLoaded', function() {
-                // ตรวจสอบว่า Swal และ QRCodeStyling พร้อมแล้ว
-                var checkReady = setInterval(function() {
-                    if (typeof Swal !== 'undefined' && typeof QRCodeStyling !== 'undefined') {
-                        clearInterval(checkReady);
-                        initApp();
-                    }
-                }, 50);
-            });
+            document.addEventListener('DOMContentLoaded', initApp);
         } else {
-            var checkReady = setInterval(function() {
-                if (typeof Swal !== 'undefined' && typeof QRCodeStyling !== 'undefined') {
-                    clearInterval(checkReady);
-                    initApp();
-                }
-            }, 50);
+            initApp();
         }
 
         // ==========================================
@@ -513,7 +505,10 @@
         }
 
         // โหลด Preset Logos — ใช้ Base64 ที่ฝังไว้ในโค้ดโดยตรง (รองรับ GitHub Pages)
-
+        function loadPresetLogos() {
+            var PRESET_LOGOS = [
+                { label: 'CPD สี', base64: 'data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACWAJYDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAQFBgcCAwgB/8QARRAAAgEDAwIEAwUFAwkJAQAAAQIDBAURAAYhEjEHEyJBUWFxFDJCgZEIFVKhsSMzwSRDU2JjcpKi8BYXNUSCg8LR0uH/xAAcAQABBQEBAQAAAAAAAAAAAAAFAAIDBAcGAQj/xAA3EQABAgQDBQcDAwMFAAAAAAABAhEAAwQhBRIxBkFRYXETgZGhsdHwIjLBFBZSI+HxBxUzQlP/2gAMAwEAAhEDEQA/AOy9GjRpQoNGjRpQoNBOoZ4geI+39oI0E0hrbmR6KGnIMmT26j+EfXn5aovdniBvHdJKVNd+6aBif8komKkj4O/c/wBPlqTs2GZZYfNBADFdpKLDXStTq4D88I6C3Pv3aO28rd79Rwyj/Mq/XJ/wrk6r66/tAWVHKWXb12uXsHYLCh/XJ/lqlIaKkhfrSBOsnl2HUT+Z0o9+c6Z20ofaH6+w944er28qllpKAkeJixJ/HXdskuaba9sgj+E1Qzsf0xrGPxz3iuTNtyzOP9Wd1/xOq6cZ1qcE8ZGoJlaUaIHn7wL/AHbiii/aeUW3b/H2sQ4umz3x/FS1Yb+RH+OpVY/G3ZNe6RVk1ZaZW9qyAhf+Jcj9dc7Y9s6y7jBwR8xnVZOKA/fLHcSPV4vSNtMRln62V1HtHZFrudvulKtVba6nrIG7SQSB1/UaV64ytM1Vaq37ZaK6pttQP85TOUz9R2P56tPZnjVcaJ1pd3Uoq6fgCupUw6/76dj9RjV2VNlTrIN+Bt4bvzyjqsN20o6khE8ZD5RfWjSCxXm13ygSutNdDV07fjjbOPkR3B+R0v08gpLGOxQtK0hSS4MGjRo15DoNGjRpQoNGjRpQoCcDJ1Svin4rymonsGzZ0MseUqbiOVQ+6x+xP+t+nx0n8ct/z1dVNs/b1Q0ca5S5VcZ5H+yU/wBf0+Oqsgp4qaJYokCoo/X5n569XMEgOQ6joOHM/gd5555tTtX2BNJSH6t54chGuOAI8k0jvLPKeqWaQ5dz7kk69dT3J0o6OPb6aSXKWSnpJZY4TK6j0xj8RJwNDZylrJUs3jMZQmVM0JF1KLd5jGnljlmmhRiXgKiTjgFhkDPxxrYM9WNN1TbobRbduXWjvqV1VdZXStpegq8ZLchxnkjsDgfLI05OCR7ajQpYAcN7aiD+0WBHB5yEZswUl35iyh0zAtybe8R3e+5KXb1uLyTRJVTKwplftkd2PyGc/PtpBtLd1uutQtsathetKs8QWQuZEHfJ6R6hznjnGdLqrw+uG8am73NrNNcKWjP2UyNUhQqFVcqgI9JyQcjk5H01Gavbe29rblhppbbuG3X6OBp4QtKtTEuMsJDjpPY46jx0n376o1NYkKZSV2e7W6xomG7CSKjAkrzJM2YAoF7gtYaaXYjeb7hE+C9+eNenI7a1UTyTUkE0sflPJGrNHnPSSM41nMhdGQMyllI6h7ZHfUKlNGRqSUqKVboS2q6U9dUVUEQKmFyFJ7SqOC6/FerK/UfMackAJz76r3alunpNxU8c6eS1vi8qWTzupJQyHpEa+ynuT8Qc86sCPGMasixAjotrsHpMJrUyqOb2ktSEqfmRcbt923O254X2G53fbd0W6bfrGppx/eRHmKZf4WX/AK/LXSHhnvu270tpaIfZblAo+10bn1Rn+IfFT8fyOuaB3xnW+11tdabrBdrVO1NXQHKOOzj3Vh7g/DR2nqe0GSaeh4deXpEez+0s7DJgRM+qWdRw5iOv9Gox4c7wod42MVlOPKqosJV05PML/wCIPsdSfUqklJYxs8ifLqJYmyy6TpBo0aNNiWDUE8ad3Ptfa5joZOm6V5MNLjun8T/kDx8yNTsnAzrlnxG3A26N91txRi1FSn7LRDPBVT6nH1OT+Y+GnoKUutWg+AfN0c7tPiv+20KlJP1qsPye6GCmg8mPp6i7ElnYnJZj7k++t4GBg6wiZZArowZWGQQcgjWzvxobMWVrKzqYwlalKUSrWPew0lrsiCVlz1BGIx3BAyMfnpWeVAOtFTH5iyR9i6FQfqMaiWq0KSrKsK4Q5+Idisdi3jTxWqvaaomgM1ZSzShjTvIC6mNcDoT0sMLng8kcaaWHfA1se3bovstLvq7WeFIzQrRyVKxdBPQekPgk8np6WxxwPzT1EnkwPIwLEdlXuxJwFHxJJAA+J1FLmhSXSlvL48aD/qHTrGMgJ+rMlLHXN0bnZveJF4eU1oqpbpbLjPe0evqoPLWikAKsFXpZBg8nDBjzwB202ftC0tlk8RbPaaaBUq6SliSslbKF4iWaNRggNkls8dyPbjXm0JNzbV3lDLupa6zUnkKbmlHU9X2aKZZDD5vlqT0hkIJyeknuM406eLsO1N52aS42aB6hLVGxkvKGRIiWOVpQGH+UvI/T6TkLknOeNNmlS5ZDMX+d0a5gmHT5eFIpZpyr7MpcXYsQDuuLW42eIb+8aFnjT7ShaWTy48A4dueFOMN2PI4GNKgkMk8FPPUJTR1M8cDSscBA7hSc+2ATz7amNd4QXa1Wz970VWl2qjErz0zwCOZcIAVh6fR6QMBMAkDvnvFrJZl3ReLbZ4qkxx1lQMyBMlVVHc5Xg/hxjg6pKExIAIv8t88IymfskqixenlFKjIUtIzFi972GlnIBvrqzw674SyW7fF4tltioKp5oBKZ4gpejP8AdiHr5yBEEwq46erk8gaZwM5I1qrNsnbG5rjbFnSZIJCocJ09RbpcnGTgcgd88aUY4444/TVgrK1OzQL21xCZVYouUojLLJSLNYHXv1j0cAfDXp78aB2xpJdK6K30jTy5YlgkUajLSSHhUUe5J1YSvKI5OTJmT5iZcsEqUWAGpJ0Ah92luCs2luKC+UZZox6KyEHiaI98/Mdwfprqq1V1Lc7dT19FKJaeojEkbj3B1xptwO9oiaSV5mZnLO7h+rLEnBHBAJK8ccccau39nLcJVq3aVRISYR9qpOo90Jw6j6HBx8zozTHtqfmA46H2940TZPEJlBXTMKnl2JA4OC1uRb0i59GjRryNNiJeLt7Nh8PrpWRuUnePyISO/W/pyPoCT+WuWbjMLXt2oqDII2gp2brIyA2OPrydXX+05X9SWCyBjiWd6iRR7hQAP6tqit31woI6GVgCpqWY9X3crE7Ln5dQB/Iagr5vY0rgPqerWH5jN8dlHF9oabDgWBKR43J8PSFdieliElrpmlYUYQKZO7RuvWh/RsEexH006KD18+2q8jrv3ZeZa2aSR56JnjkgXmSdGcLkL8SW6uo9yyAdjiY2O9Ut2E5ps4ikZVbuJFGPWp+pwR3B79xoLQTguSjMXIZ+ZZ/89/CA22+zs6hxGdPkyz2KiVO2n1EF+Ae4fcU8YdjwMa1v9dDsEVmLAKOSScY14CGUOCGUjKkc5GrqnN2tHEJlLydo1nZ9z8Is3wXrqertFz2zVojqjGqiQ/jikOJVx8m5/wDXqA26Kg2r46UEW6qkLbaMSTUQHUytJkiKSQdOAcdbAjIHp7aS0NwqbRWR3Oiqvss9NlllIBCjGGBB4Kkdx/8AzUrrLTues2bWbnuu46GnFdIKmSzXSzxzwkD0wiP1iRGKgY5yMntqJQJ0LGNz2JxClxWlR+qQ66cNmOgBsCDuLDfweEV/tl/3NSjxJob69FLQ2FpYKqjbDtIsknVCwUj0Mo+9yAM8d9Kdtbbu1RuHaO5rjcrnum3VKiadrjM3+RTOgMUscOcADhT97ls4HB08eDFDbazZopZaSH7fR1zxTlGcR4bMqP0EnPDEDOT6eTqa1FtpYWWnelUw4CqFJUBRj0YBAxjTFoUBmOm/rGhUdTIq5SZ0lVlBwWGkMG//ABNpNrXikojb5K+GTIlmgYHokBX08nAx1AE+zMBqvNuPLR+OCbmviNbDdaiVqa1K6vNAjJ0+bJGAGiiyWJd8epsjgk6PEyohqt710MUccdPQxx0UUKqAqAL1uMduWfn6DUi/ZzoqOCS9WemstuEMipNVVsgZp5xIzAQux++uAxGTwOMHvp9p0wOenWOWpNqpK8TnYYUXTYHV2AJ6EHTw11YvFaPp8Q7ueQHaJwD7ZhTj+Wo0CAADpTd42ivVyhNVLVCKunjWWVy7FUkZEBJ74VVX6DSZcEge/bVY2WTGIbQzBNxSoUP5q8i0Jrlc6C2qrVtSkPWfSCeT7dvhn3PGopedy0V1QLb4WlSnw5maRAFLkRjCgljy3cDIPTwckaY6pHvO72jq+1Q48okBgB5xjUkDIKoFBCuMFmJ99Tii2hYqV2Y08lQXCBhNISh6TlR0DC4B9sY1bTT9tJdxf0djvHOOllSMP2YqZMypzqnJAV9JAAJAIAcXZ2Je97NCrafT+5U8uJIoDK5hVBhQmfb5Z6udP9huj7f3bZr/ABnApaoJPz3hf0vn8jnST0gAKAABgADgfLWFUgmpZoz+JD20SoiJOUG4DDu0jkZuJrmYkquSMpUsqbg5eOxEYMgZSCpGQR7jRqN+F1zN48PrJXMcu1IiOc/iX0n+Y0anWnKopO6N/kTROlJmDQgHxiof2hpvP8Q6CEf+XoR7+7FjqkvEWCsjNFX0kVTKylomWMlkT8XU8fS3UCvmLnHGRq5vHqNl8TgzHh7fGR+rD/DUImQSxMjM6hhglGKsPmCOQdNq5SJqQlQtl/JjIa3FpmF7Sms1KFeWni1xzaKG+13Oe7GajlVaMVKGObKRvlUIQBzkYAUDp6uQG4+EoNfVfv16mOqrJHRJKiGSFFSnUs3rJ6HZDklQec8gEHuJhYaapqKeqoKteiOknWMxyIk0E8iry/QVHBBHHsScE8nUffY91p3urUtbb6eiSKSt6U6hJMqMHeMBsjr9xkkHpHfGglXSPLSWAKQwI1Hf83xs+EbUYDV1cyiSoq7QuUqFlWcsLgkg7zuAa0Tew1ktXa6ardoJJXTL+XxGzAkH4kA47dxnW6m8sebDBhhG5YqqktGCfx44GCQM9u3OottutpaK8fu+B5Y4aiZo4lqZoxKwZfNgkZV4LvGSCQTkhdTmzbhpbXbp6iOl+2HOY3RwySoMq9PIp4MZy3bnJ451LTzVTJXZnUlu8Hd19DGTqwWilYlNw+omZJUz65Zb+RsHexYFJ1cixGsOnhxt4br3S0c//hNrKTV5PaWTvHBn8i7D4BR76U+JW60v9wSlomjNupSRG6HKzPyOpT/CBwD75J7Y1A6S7z2ulu4grf3Nt2sduuKSdS00QJKiR+wGCcgeps4PHBilVuysvVBTz7bCUsUk3SKupKlVx3V4wCVByMH24zjUC5glpzTvpLn+3leOgFBULpzgOz4Mz/1mMwvqN/Qs7JDXvFo7B3hbdo71onu9fHR2+5RyU9RJKcInQpkSRvgFOVJ/2mp3e/Fnw9nt0tzj3CZUpgjNTxwOKh1zwyRMAz54+7nAOTrkvcttuqpWV81RV1ztCyN0xNKkAIy0JXlkAOSr5wwIOe40o3HUvR3uhuKsk8FRGqoT1Boww7hlIPI7DjJUDI1HU1CpRErLmCnIPGw0jSdjdm1UeEATJzrRqAHKXUQQQ7hufpE8g3ZdN47quO4KfbslBYKqZ5TUN1SdMnSiqruAEVj05IBOM4zq1PBfcVvtNg3heDUwyy0ckREQOWKpFhSPiDI/Tke+q18G/GQ7ZsUNrulrq6+haWcVKoEiKguxA8t89Xck5K98ZbWVK9Nv7xDuFPsi3/ueCdQ6UkpVfT0jzJSF6lRMrgLz6iucADXql5WUgjMNQ94p1myCKGtXjKJakpWlk/SSlSlEAKJaz79zXFmEOlTT10HlSV9NNDJUp9oVniZBKGOS657qWJ/XWhiQcj66s+xzW3xEslZYLqDbNz2aZlIKFcdICl1U5BQghXCkgYUj8Oq0nimp55KepQRzQu0cigkgMpIOM9xkfppGWMoUDYxie1uzi8JqDMSrOhRIcs+beC1tX9N0VPvanez3mSVGWJ4pGrqZ8IvUjNl0BPLEYLAZ7qPjqydtXiG+2qKtidQ/AmQEEo+M+xPB7j66Zd/oyWmO5wnpmoZlkVhgHpJAIz7c9J/LTV4fVEtFuSotjYMEwZoWRkZCjZkjwVA9usdh8MDGrFGtlmTuNx+feDWMoTjmzknEz/yyv6aueUBj3pZ+cWAQcjnXqH1Y0fTXg++MHV9IaMxi8f2ZauSfYFRTv2pbjNEn04b/AB0aT/strjY9zIHBu039F0avz7rJj6BwMk4fJfgIY/2jqcpu+zVWMCakePOPdWz/APIarcg5xq6P2laNjtm23ZVyKGtAkPwSQY/qF1TGfieNKYxQhXIjz/vGT7a05lYqtW5QB8veBU98aU2bm80a4+/I8fZTw0bj8XGkpkwNaJ7jBa/LuVX5n2ellSWXoTrbpDDqwuDngnQyoTmlqCYpbLVH6bGaWarQLT4OAfKK7t00tukjipS007oVpKemnhLmenmIAZAo4Kuw6j6u5B6RnUvsKwy26ajgmbpikCOSACrtGjMMexBY5HxzqMVNctDue5UH7wYRo5akaIKzNTSys5C9PJGCuQSD6engcafNu3WzxUBjFQlPL15lEzqvUxIGQRhSOwGO2Md9A5BJrFAlgwPUkC/cBGtbc4YZOCInS5ZUsr+4BwlKFLYHqVHlp31zfJXrLnWitkJnWpkSIOvUkQVivpQnAOFycc5Pw0jtclRRU9TJR3h6epZlJEodUYBHwcRqx6sgDOO3B1Yu4aHadZVtPWKstU6uxWklfzJegYbIQ4JHbJ/XUSus9ht1x+xw2lFqBLF00ccrNUTo6fdkkLER8keker+en1MsKWoKU5N2Zz/jyjucC27k1mDyKaRRKldmAFLLJluAxLu6ibmySq7RPP2dtuWPeliutduredRb6iiKKnRPDBwxfPqYAkekAAH3+eoZcbRUR7cpq2Kqjqre1VLTUs0TBjBKoDtDJj4qQy4OSBkHK6ZqGyW+mR6m+GjiuMU8SR2ZYGQSoAOliysD6gSSwyTjkgnVj7GscFVu8zXK1QUthqnNU1kkkYLK0YARfvcEKzEZOeWBHSTqyumlmWAAzXtx+W5iHYdtlLlYmlC/rCyzE3UGuATfmDuIis6V3kqpo6aWMsGBnhlfrZMjBZWGOrOOxwc9znRWivtVVTXnblznqHFIZzM0LRkkSdAiCj7qhuerPxOe2rCq9q7ObdNxe10UdRAlXIsbRdccTxE9S4AwOkqR8jjIzqJ+IlYk+5PstB0pJFb/ACIYosDym6sBQR90kMPT7DHx0ETVPV9igFw7v4cz0NubmNIq1iuoJeVYTLYkMp0szizDTQ6gHQJFonW2d7XGaehvM1V5F7d/tMMs0oKyg4zl1GMlSVKkZPw08zTyzzy1FS3XPM5eRuTkn68+w1SBpRHcWpoJP3BXvI5qqKrjCUmAPQAhPrBx3+Z57adqHd15tcVOt0pLjSLURmdZVhFRFIuODHGcMij354/POipkzUW1Hzd7PHzXi2CoxaWpNBUBAWorKF6ZjvSsDTVgQANXMTzfMwXa9YiqXkmCxRoMZZiwwBn8z+Wojt6phk8SnjjUPNFPBC0rDy5gY4m8wOg4JzkMw7kA++kkNyvW5K9FtlPcLzXx0/n06pTfZ4KOXOfMbq7qoGSex7ZxqR7H21WWu+faq6phraqdSSY545HNTIf7RmPHSvw5wMkkgaJ4bh1VPWZ6UHKkEacW9orzqaXgeAzMOXMC5swlRCS4FmA58/jzsnqHHGgjnJHbnQY51aUGnkIiHU7xjzYwPiWXIA+uNJ7jKyUUzDLOUKqM9yeANXVSZiZmRaSDzEZUqmmIUEqDPHQ/7OtGabwwpJyOayomqPyLkD+S6NSnYNqNj2VZrSww9NRRo4/1+kFv5k6NTzVZlkiPoSgk9hSy5fAAeUZb6sq7h2jcrOcdVTAyxk+zjlT/AMQGuU6YyeV0zKySxkpIp7qw4IOuxtc5+OW3msO8musUfTb7uevqHZJx94H69/zPw0+WM6CjvH58vSOM27wwz6dNUgXRY9D7H1iBVUyQKSwZuCcL8Pqe2m+v+0VtrqSaOZqCQGCSdYn6F6h26+wP1Gl9VAJ1xkA4xyMg+4z79/hoqJ7rPbKW1wQ1E0FIHECwk9QDsGIcD3z7kHIx8Bo1hFHQ1MogpzTN4dmHEaOepjO6BMr7i+YadXtEEj2vdZo6g0s1C1xabrgpB1K1YgGXkVgenqwT6S3OB376YIempqppaS71dpmFZDGaGqjVwxC4MhhP8JH3cdIHPtzYE1iudbQuk1uqnoyrOUQHDdOcuPc4weR2wfnrRXxVLQU1xrqtqvOGp2njSWUdI6R/aY6sfAEn4/DQ6ZsQrtv6BSUKLXuQOeo3bjGqnbeonUye3UtE1IsR9quDizHibjxsx0Gyd8XumqKOikuNREIGSkFKkVGtQpPUwdCQ7dRHLA/D6ayotn36S/1W29vbWa2NVwJDVxXEcA4JeVWfJCgdXPI4J406WbbVxvc8tVRU7kwYeSrao8pICexMrEBT+eT7af6697thNFPfqi3XijVVpleWCKVZFzyvmrhldsfezknnRFWx9PJOSSsPv0F/c9RA2Zj1RVJC56ierkd3hrduEebb2ns6xN5dfuvz7kO1QaKSWKM4xhSWyB7ZxnHy404rR2KqDU9duC3xZOMGGWRfgD1Koxn5fHTQkdqprtep5adbjDQ+ukpXlbEuWx62XkqgPIB9XHOM6br3dLfcKGmkpbBT2usjkdaiakLJBKDjoHQSQrDnJzzxxon+3aEkJCVNo7jUh451SUz1fqFgZxcXW/iFW5Rs8RtnSzeXLA8bTrF/YSU85EFXCOOkMMcqe3UMqeCADnUE2tZ6w3iBq63mhpaRxI7TdCGTByBGOrLZIGcZHfk8asWurKhtrU9DV+SIzJ5sbNH1yHpDITz6VU9uQSekdsDSfZIs8O5qK61s5q1pXEhpakJGs/T+FX+6GHsGABxjI40JVsjJ7RU5WYpGjb2+cPKOswba7EMOw2bhUiYBLmAi4+pAVYgL4HUA6dXhdf7ZZKiKOl3IaeLqRZESWJ3ljVhkNheUJGDjIOCONRC77CpaGOnr9tb2T7NUGSLMwaRoSMFo2Rh1rnOQeRx3zp+utNJdNxXStqqkQQs81V5r4cyFn9Krg4LeoZGeACfhrXTvbZFgpkskcjDEcjhpDPI/4irA4Xv2UYHGc6JS9nKNSUgAkjW7DR26xzdMsUIKEG27Uvudvt8o3bIpaq1bdutNd64XCGtijp4aihAD0qxuWRCGILKSeQcdhgnGnJKChG0akVFFSR1olgS0tDEqVk/OJTIqkkrjnqb8XbOvdmxpHuKtiEnm2qlMonlkA6ZIeQM44Jbtgdz276itDHXbdq7vdL9GslBUzxKJaderoiTITrQD0Kv4iCSScnga9nTqfCciUKOU/UE2fo+t7ecMVVKVn7Rs1wAP+2gYDfq43v5Tx5Kqmgmty3Az05ZfM6cHrYAdS9Y5ZA2ePl8ONLdjWqS/eIFitSgmIVH2mox/o4/Vz8iRj8xpht1woa+2pcKOpSakYFllT7pAJBx+h1dn7NO3n/dtTvGsgaOavHk0asOVgU8sP94j/l+euXVUrqJyp0zd67vfuilgdHOxLE0pWDlQbg7gN3Xd1i5Ro0aNVo2mDTHvrbdJuvbVTZqs9HmANFKBkxSD7rD/AK5BI0+aNepUUlxrDJstM1BQsODYxx9cqKutFyqrPdIzHW0jdDj+IezD4gjB/PUCv9fe0RtyOooqamxFBaqgEvXAtyHA+7IfwAZI99deeMmwBuu2rcLYFivlIp8ljwJl/wBG3+B+PyOuaKulQ1zTVNAwutvWRRTykq0T45AB4BPA6sZGdOUAg9qjTeOH9jx3eEY9ieEqwSrKinNLVoeXDgCdCdRqIXytTXFYKqae40lXT0scKpTqjdIVMBT6h5bAcHuO599NlZTqaKC3mfzZI26KZ4424U89Lgj04PHV21HLck0V4qN33gNtyBoYoZqd3GJmHdpBg45IVT97jPvjUmsd2hulno69lEC1iZjikcEkc9vjkDPHsdGKbaSqpkpSWIDDpyffA+pmTJYzEZhZyP5EOQ9wW5d94V1O4bPH4ay7NvVrukVdBWtUwPSyLGkkhHTiXqBOB8hn4Y01+FUN0k3DFT06l4epTKkihoivv1hvTjGc57DOn+W90SLBQ3imttaXUiL7TlZSiDJw6kHAGOTnHHOs62vpKm3CioLTQUFI7JIwg6naUrypLsT6ec4AAPvnRb9x0UuUsgF1OWNw5i4cRlKlpKjYaWY+3J3jKupdv2ynvd0t1JHcoEuzUtv63cwxQdJZW9JBbq5VSTjpX3zpooNxXx6J4LbeKakigIUUEk6RwPGxJY4k9L4OAQcnB98adY7rcBL1tWPJmPy2V0RkZM56WTp6SM/LPz17U3BJ26zZrAknTjzEty9Q+fJK5/LVWTtBRiXlWCTxN49TitOqbnJYXsza8GfziIV9dQpUGjlRa+niP97TSmIDPLKgZTlQxIUnHA1hcWss1HTUtkt1wNSJXeapqFUMVKgLGApIIByeo4POANSmZqKpZZKy1Uc0qqEMiBoWcD+IL6SfmANbRXw0tPJHR0VHQiQdLyL1NJg8Y63JwDn2APz1b/clAiWkgqcbvn4hqsRkDMUkX5F7+XnDZb7I9LaZaW8SSUjzvF5cZBZ48Nkysg5AABAB5PVxnGtaWBnjkhfc1LFRsQ7xwySsX/8AbCjJ+uPnpXgk8Dk+w+OmPce4VoUo6aiemlqq+VoaeSWbpgRl4JYjuQeAo5J440DXtTVTJisqAx0BuzRWkVsybMCZSL9e8v8ABaHO6XGz2+Wht8CiHrby6SKTBkkbGWkfHbtyeyjAB+MHgjqqgyUdW89FuqrWRXWqlcw1MTIQwToyoRR2xypUZznThLaKW8V1St8tdLW32kpvLjDO8cE8RY9LrjPTkkg9ypH01L9i2C+3n7Dtu3v9suyxBaioJ6kpx7u7Y9hgZPJI7Z0HM2ZVTCpZdR16e3GJ5ZIUEygVTFMPUhtXRo4IDlmL6LfCfYz7lr6fa9DHHBb6XokvFRApWMcDqVR7M5Hb6n2Ouv6Kmgo6SGkpYlhghRY441HCqBgAflpk8P8Aads2btyG0W1M9PqnmI9c8h7u3/17DUh1Ksj7Rp6841DA8JGHSTmutV1HnBo0aNMg3Bo0aNKFBqAeKXhnbN4x/bqaQW6+RD+xrEXh8dlkA+8PbPcfPtqf6NOSopLiIKmmlVMsy5qXBji7fG2aqjk/7O7yt8tKXkVlYORBU9LZHS47jOOP6aiBtc+3pDWPGa7rqmprbBEGVKGOZyzMSASPhkDgYA13huCyWm/257feKCCtpX7xyrkA/EHuD8xqkd6eCl0tweq2XV/bKfJP7urHw6j4Rye/0P6nXipaVfYW5bu47vl4z7ENl6qkB/SHPLNynf3ddC1yLaRzNY4qu53K52+71hWlo4Hpq3zAHlhUycQidhlkcAsTjOOkZ1MrderYaUIqvSJDWG2xRuv3pF4CpjORj9MHOstx2+CmWttF8tlZZKmqbMxkh8tmYYw/VjBIIGCfhpE1lANkFrmhkgoat6mYyuWaUurgvkd26nJ5451HMCtFhvTxjmKxSJpackoI3aAWvfiTa92Zy7vluHc1toaWuhprpb/3nCpWKmkkyxlP3V6RySSRxpuq77eaG6iO4VFopAEiYUkrqDUqQA5R+rIcMWHSVxx3Odad0bXul5jrXcRCoFQFpfWDG9MxXqUrj0sME9Wck/LjS/c9okr9w2yppbTTmSGeOVq8kBkVG5jPuQVJx35+GoihCQOMKQiiQlKXBcF3YtYEMbWN+JF2vD6blQ+bVRCshMlIvXOgb1RrjILDuOBnUY31d0nsr0ENokr46+FOiWSZYIQZP7v1MQS3ZsDtjnW28bbudZuaW6UdzaiV7eafpSNT1N1ZAcEetSCc55HGNZx2BIqWzRXG4Qypb6Y088EsKvHOCoGQGyVIwORzjj31BKAzJLueF4ipkUkhSJufMbFr2LPubeGF997B4bb5dRV7eoq2ouZo7RWUzU9QmMTLKqseJR2bqToxjBydK9qWqpO03sl7hjej8iPy5AFQdDoGK4HZkbPq9+D31K9nbTrbhCLTtTbtRUwKxYDy+mFCzZJLNwBk6uXZngXGZo67edd9rK8rb6disQPwZu7flj66timUU5V/SHe+vK3vBijw+rr09lTS8qHcKNmY2Nt7WNz5RVuwdn7h3rUx0tjEsNDCBFU3epTgAAA9P8bHGePfvjvrp3w/2XZNlWcW+zwEM+GqKiTmWdx+Jj/Qdhp9t9HS0FHFR0VPFT08K9McUShVUfAAa36mdKU5UBh69Y0DB8Bp8MS6brOp9oNGjRpsHINGjRpQoNGjRpQoNGjRpQoNGjRpQoS3K3W+5U5p7jQ01ZCe8c8Suv6EahF08GvD2ucyLYhRSH8VHM8X8gcfy0aNOStSftLRBOppM8NMQD1EMlT4EbeMhalvt7p19k81HA/VdaP+4a1Zyd03v9Iv/wA6NGndqo6t4CBp2fw0lzJEK6HwJ2tG/VWXO9Vg/hapCD/lGpVYfDTZFlCmj29SM689c4Mzfq5OjRpdqvcW8osycKopH2SkjuiVwxRQxrHFGkaLwFUYA/Iaz0aNRwQ0g0aNGlCg0aNGlCg0aNGlCj//2Q==' }
+            ];
 
             var container = document.getElementById('preset-logos-container');
             var loadingEl = document.getElementById('preset-logos-loading');
@@ -553,7 +548,6 @@
             currentUserRole = 'guest';
             document.getElementById('nav-settings').style.display = 'none';
             document.getElementById('nav-stats').style.display = 'none';
-            document.getElementById('group-name-block').style.display = 'none';
             
             var btnSaveDrive = document.getElementById('btn-save-drive-only');
             if(btnSaveDrive) btnSaveDrive.classList.add('hidden');
@@ -565,6 +559,21 @@
         }
 
         function handleAuth() {
+            // Guard: ถ้า Swal ยังโหลดไม่เสร็จ (defer script) ให้รอแล้วลองใหม่
+            if (typeof Swal === 'undefined') {
+                var retryCount = 0;
+                var waitSwal = setInterval(function() {
+                    retryCount++;
+                    if (typeof Swal !== 'undefined') {
+                        clearInterval(waitSwal);
+                        handleAuth();
+                    } else if (retryCount > 40) {
+                        clearInterval(waitSwal);
+                        alert('ระบบยังโหลดไม่เสร็จ กรุณารอสักครู่แล้วลองใหม่');
+                    }
+                }, 100);
+                return;
+            }
             if (currentUserRole !== 'guest') {
                 // ออกจากระบบโดยไม่ reload หน้า เพื่อป้องกันหน้าจอขาว
                 sessionStorage.removeItem('qr_auth_role');
@@ -648,13 +657,11 @@
                 // admin: เห็นทุกเมนู
                 document.getElementById('nav-settings').style.display = 'flex';
                 document.getElementById('nav-stats').style.display = 'block';
-                document.getElementById('group-name-block').style.display = 'grid';
                 if(btnSaveDrive) btnSaveDrive.classList.remove('hidden');
             } else if (role === 'user') {
                 // user: เห็นประวัติ แต่ไม่เห็นตั้งค่า
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-stats').style.display = 'block';
-                document.getElementById('group-name-block').style.display = 'grid';
                 if(btnSaveDrive) btnSaveDrive.classList.add('hidden');
                 // ถ้ากำลังอยู่หน้าตั้งค่า ให้กลับหน้าสร้าง
                 if (document.getElementById('section-settings').classList.contains('active')) {
@@ -664,7 +671,6 @@
                 // guest: ซ่อนทั้งประวัติและตั้งค่า
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-stats').style.display = 'none';
-                document.getElementById('group-name-block').style.display = 'none';
                 if(btnSaveDrive) btnSaveDrive.classList.add('hidden');
                 if (document.getElementById('section-settings').classList.contains('active') || 
                     document.getElementById('section-stats').classList.contains('active')) {
@@ -798,14 +804,7 @@
             var dataToLog = getQRData();
             if (!dataToLog && currentType !== 'url') { Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบก่อนบันทึกครับ', 'warning'); return; }
             var workGroup = document.getElementById('work-group').value;
-            var qrName    = (document.getElementById('qr-name').value || '').trim();
-            if (!qrName) {
-                Swal.fire('แจ้งเตือน', 'กรุณาตั้งชื่อ QR Code ก่อนบันทึกครับ', 'warning');
-                document.getElementById('qr-name').focus();
-                document.getElementById('qr-name').classList.add('ring-red-400');
-                document.getElementById('qr-name').classList.remove('ring-emerald-200');
-                return;
-            }
+            var qrName = document.getElementById('qr-name').value.trim();
             Swal.fire({ title: 'กำลังบันทึกลง Drive...', html: 'กรุณารอสักครู่ ระบบกำลังสร้างโฟลเดอร์', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
             
             var qrColorDark = document.getElementById('qrColorDark').value;
@@ -863,9 +862,8 @@
                         actions = '<button onclick="previewQRFromDrive(\'' + row[6] + '\', \'' + row[5] + '\')" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white p-1.5 rounded-lg shadow-sm transition-all" title="ดูรูป QR"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>';
                     } else { actions = '<span class="text-[10px] text-gray-400 italic">ไม่ได้บันทึก Drive</span>'; }
                     var groupBadge = row[2] ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800 whitespace-nowrap">' + row[2] + '</span>' : '<span class="text-[10px] text-gray-400 italic">-</span>';
-                    // แสดง "ชื่อ QR Code" (row[0]) แทนรหัสอ้างอิง ถ้าไม่มีชื่อให้แสดง row[7] (รหัสอ้างอิง) แทน
-                    var displayName = row[0] && row[0] !== '-' ? row[0] : ('<span class="text-[10px] text-gray-400 italic">' + (row[7] || '-') + '</span>');
-                    tr.innerHTML = '<td data-label="ชื่อ QR Code" class="p-3 text-xs font-bold text-gray-700">' + displayName + '</td>' +
+                    var qrNameDisplay = row[0] ? '<span class="font-semibold text-gray-800">' + row[0] + '</span>' : '<span class="text-[10px] text-gray-400 italic">-</span>';
+                    tr.innerHTML = '<td data-label="ชื่อ QR Code" class="p-3 text-xs">' + qrNameDisplay + '</td>' +
                         '<td data-label="ประเภท" class="p-3">' + getTypeBadge(row[1]) + '</td>' +
                         '<td data-label="กลุ่มงาน" class="p-3">' + groupBadge + '</td>' +
                         '<td data-label="ข้อมูล" class="p-3 text-xs text-gray-600 truncate max-w-[120px] sm:max-w-[180px]" title="' + row[3] + '">' + row[3] + '</td>' +
