@@ -1,3 +1,164 @@
+script>
+// ==========================================================================
+// 🛠️ GAS Compatibility Bridge v2.0
+// แก้ไข: Proxy state leak | unguarded google.script.run | CORS | <?= scriptUrl ?>
+// ==========================================================================
+(function () {
+    'use strict';
+ 
+    // ------------------------------------------------------------------
+    // [1] ตรวจสอบและกำหนด SCRIPT_URL
+    //     ลำดับ: hardcode ใน Index.txt  →  input field  →  localStorage
+    //     (Bridge นี้จะไม่ override ค่า GAS_WEB_APP_URL ที่กำหนดใน Index.txt)
+    // ------------------------------------------------------------------
+    var rawTemplate = '<?= scriptUrl ?>';
+    var isTemplateLiteral = rawTemplate.indexOf('scriptUrl') !== -1 || rawTemplate.trim() === '';
+ 
+    // expose flag ให้ getScriptUrl() ใน Index.txt ใช้ตรวจสอบ
+    window._BRIDGE_TEMPLATE_URL = isTemplateLiteral ? '' : rawTemplate;
+ 
+    // ------------------------------------------------------------------
+    // [2] flag บอก Index.txt ว่านี่คือ Mock (ไม่ใช่ GAS จริง)
+    // ------------------------------------------------------------------
+    window._IS_MOCK_GAS = false; // จะ set true ด้านล่างถ้าต้องจำลอง
+ 
+    // ------------------------------------------------------------------
+    // [3] ถ้าอยู่ใน GAS iframe จริง → ไม่ต้องทำอะไรเพิ่ม
+    // ------------------------------------------------------------------
+    if (typeof google !== 'undefined' && google.script && google.script.run &&
+        typeof google.script.run.withSuccessHandler === 'function') {
+        console.info('[Bridge] ✅ Running inside GAS iframe — Bridge inactive.');
+        return;
+    }
+ 
+    // ------------------------------------------------------------------
+    // [4] จำลอง google.script.run ด้วย Proxy ที่ปลอดภัย
+    //     แก้ Bug #1: ใช้ closure แยก handler ต่อการเรียก 1 ครั้ง
+    //     แก้ Bug #2: ดักเฉพาะ prop ที่เป็น string และไม่ใช่ built-in
+    // ------------------------------------------------------------------
+    window._IS_MOCK_GAS = true;
+ 
+    function _getUrl() {
+        // ลำดับเดียวกับ getScriptUrl() ใน Index.txt
+        var hardcoded = (typeof GAS_WEB_APP_URL !== 'undefined' && GAS_WEB_APP_URL &&
+                         GAS_WEB_APP_URL !== 'YOUR_WEB_APP_URL_HERE') ? GAS_WEB_APP_URL : '';
+        if (hardcoded) return hardcoded;
+        var inputEl = document.getElementById('setting-script-url');
+        return (inputEl && inputEl.value.trim())
+            ? inputEl.value.trim()
+            : (localStorage.getItem('qr_script_url') || '');
+    }
+ 
+    // สร้าง chain object ใหม่ทุกครั้ง → handler ไม่ปนกัน
+    function _createChain() {
+        var _successCb = null;
+        var _failureCb = null;
+ 
+        var chain = {
+            withSuccessHandler: function (cb) { _successCb = cb; return chain; },
+            withFailureHandler: function (cb) { _failureCb = cb; return chain; }
+        };
+ 
+        // SKIP_PROPS: property พิเศษที่ Proxy ไม่ควรดักเป็น GAS call
+        var SKIP_PROPS = new Set([
+            'withSuccessHandler', 'withFailureHandler',
+            'then', 'catch', 'finally',
+            'toString', 'valueOf', 'toJSON',
+            Symbol.toPrimitive, Symbol.toStringTag, Symbol.iterator
+        ]);
+ 
+        return new Proxy(chain, {
+            get: function (target, prop) {
+                // คืนค่า property ที่มีอยู่จริงบน chain ก่อน
+                if (prop in target) return target[prop];
+ 
+                // ข้าม built-in symbol และ prop ใน SKIP_PROPS
+                if (typeof prop !== 'string' || SKIP_PROPS.has(prop)) {
+                    return undefined;
+                }
+ 
+                // ดักเป็น GAS function call
+                return function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var successCb = _successCb;
+                    var failureCb = _failureCb;
+ 
+                    // reset ทันทีหลังดึงค่า → ป้องกัน call ซ้อน
+                    _successCb = null;
+                    _failureCb = null;
+ 
+                    var url = _getUrl();
+                    if (!url) {
+                        console.warn('[Bridge] ⚠️ Script URL ยังไม่ได้ตั้งค่า');
+                        if (failureCb) failureCb(new Error('ยังไม่ได้ตั้งค่า Web App URL\nกรุณาไปที่เมนู "ตั้งค่า"'));
+                        return;
+                    }
+ 
+                    // ส่งแบบ text/plain เพื่อหลีกเลี่ยง CORS Preflight OPTIONS
+                    fetch(url, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify({ action: prop, payload: args.length === 1 ? args[0] : args })
+                    })
+                    .then(function (res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+                        return res.json();
+                    })
+                    .then(function (data) {
+                        // รองรับ GAS response ทั้ง { status, result } และ { success, ... }
+                        var isSuccess = (data.status === 'success') ||
+                                        (data.success === true) ||
+                                        (!data.status && !data.error);
+                        if (isSuccess) {
+                            if (successCb) successCb(data.result !== undefined ? data.result : data);
+                        } else {
+                            var errMsg = data.message || data.error || 'GAS returned error';
+                            if (failureCb) failureCb(new Error(errMsg));
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('[Bridge] ❌ Fetch error on "' + prop + '":', err);
+                        if (failureCb) failureCb(err);
+                    });
+                };
+            }
+        });
+    }
+ 
+    // google.script.run ทุกครั้งที่เรียก withSuccessHandler/withFailureHandler
+    // จะได้ chain ใหม่ที่มี Proxy ใหม่ → handler ไม่ปนกันเด็ดขาด
+    window.google = {
+        script: {
+            run: new Proxy({}, {
+                get: function (target, prop) {
+                    var chain = _createChain();
+                    if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                        return chain[prop].bind(chain);
+                    }
+                    if (typeof prop !== 'string') return undefined;
+                    // เรียก function โดยตรงโดยไม่ผ่าน handler (เช่น google.script.run.foo())
+                    return function () {
+                        var args = Array.prototype.slice.call(arguments);
+                        var url = _getUrl();
+                        if (!url) { console.warn('[Bridge] Script URL ไม่ได้ตั้งค่า'); return; }
+                        fetch(url, {
+                            method: 'POST', mode: 'cors',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify({ action: prop, payload: args.length === 1 ? args[0] : args })
+                        }).catch(function(e){ console.error('[Bridge]', e); });
+                    };
+                }
+            })
+        }
+    };
+ 
+    console.info('[Bridge] ✅ Mock google.script.run active — routing via Fetch API.');
+})();
+// ==========================================================================
+// [ สิ้นสุด Bridge v2.0 ] → โค้ดด้านล่างทำงานได้ปกติทั้งบน GAS และ GitHub Pages
+// ==========================================================================
+</script>
 <!DOCTYPE html>
 <html lang="th">
 
