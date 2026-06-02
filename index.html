@@ -923,7 +923,9 @@
             saveQR.getRawData("png").then(function(blob) {
                 var reader = new FileReader();
                 reader.onloadend = function() {
-                    var base64data = reader.result;
+                    // ตัด prefix "data:image/png;base64," ออก ส่งเฉพาะ base64 순수 ให้ GAS
+                    var fullBase64 = reader.result;
+                    var base64data = fullBase64.indexOf(',') !== -1 ? fullBase64.split(',')[1] : fullBase64;
                     var successCb = function(res) { 
                         Swal.close(); 
                         Toast.fire({ icon: 'success', title: 'ดาวน์โหลด PNG + เซฟ Drive สำเร็จ!' }); 
@@ -941,9 +943,9 @@
                             .withFailureHandler(failureCb)
                             .uploadToDriveAndTrack(base64data, dataToLog, currentType, workGroup, qrName);
                     } else {
-                        // --- รันบน GitHub Pages: ใช้ fetch() ไปยัง Web App URL ---
+                        // --- รันบน GitHub Pages: ส่ง payload ให้ตรงกับ parameter ของ GAS ---
                         callGASFetch('uploadToDriveAndTrack', {
-                            base64: base64data,
+                            base64: base64data,        // pure base64 (ไม่มี prefix)
                             data: dataToLog,
                             type: currentType,
                             group: workGroup,
