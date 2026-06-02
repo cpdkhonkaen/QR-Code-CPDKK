@@ -848,8 +848,17 @@
                    !window._IS_MOCK_GAS;
         }
 
+        // ============================================================
+        // *** ตั้งค่า Web App URL ตรงนี้เลย — ไม่ต้องให้ user กรอกเอง ***
+        // วาง URL จาก GAS Deploy แทนค่า YOUR_WEB_APP_URL_HERE
+        // ============================================================
+        var GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxSvK6kKurl0_Loc5j_dPXu-vJsg3BDBMjE8nv3RKg1kBXAwz8yjxaoEEwXKc3QCd99UQ/exec';
+
         function getScriptUrl() {
-            // ดึง URL จาก input field ก่อน ถ้าไม่มีดึงจาก localStorage
+            // ลำดับความสำคัญ: 1) hardcode ในโค้ด  2) input field  3) localStorage
+            if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== 'YOUR_WEB_APP_URL_HERE') {
+                return GAS_WEB_APP_URL;
+            }
             var inputEl = document.getElementById('setting-script-url');
             var url = (inputEl && inputEl.value.trim()) ? inputEl.value.trim() : (localStorage.getItem('qr_script_url') || '');
             return url;
@@ -858,7 +867,7 @@
         function callGASFetch(action, payload, onSuccess, onFailure) {
             var scriptUrl = getScriptUrl();
             if (!scriptUrl) {
-                if (onFailure) onFailure({ message: 'ยังไม่ได้ตั้งค่า Apps Script Web App URL\nกรุณาไปที่หน้า "ตั้งค่า" แล้วกรอก URL ก่อนครับ' });
+                if (onFailure) onFailure({ message: 'ยังไม่ได้ตั้งค่า Web App URL\nกรุณาเปิดไฟล์ Index.html แล้วแก้ GAS_WEB_APP_URL ให้เป็น URL จาก GAS Deploy ครับ' });
                 return;
             }
             var body = JSON.stringify({ action: action, payload: payload });
