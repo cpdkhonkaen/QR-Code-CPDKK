@@ -407,6 +407,15 @@
                     </h3>
                     <div class="bg-blue-50 text-blue-800 p-3 rounded-xl text-[10px] sm:text-xs mb-3 border border-blue-100">ระบบจะสร้างโฟลเดอร์ย่อยเก็บภาพ QR ลงโฟลเดอร์หลักนี้ (แชร์โฟลเดอร์เป็น Anyone with link > Viewer ด้วยนะครับ)</div>
                     <input type="text" id="setting-drive" placeholder="รหัส Folder ID ของ Google Drive" class="w-full px-4 py-2 rounded-xl border ring-1 ring-gray-200 outline-none mb-3 text-sm">
+                    <!-- [GitHub Pages] Apps Script Web App URL สำหรับเรียกผ่าน fetch() เมื่อไม่ได้รันบน GAS -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3">
+                        <label class="block text-[10px] font-bold text-amber-800 mb-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            Apps Script Web App URL <span class="font-normal opacity-75">(สำหรับเปิดจาก GitHub Pages)</span>
+                        </label>
+                        <input type="text" id="setting-script-url" placeholder="https://script.google.com/macros/s/XXXXXX/exec" class="w-full px-3 py-2 rounded-lg border ring-1 ring-amber-200 outline-none text-xs bg-white/80">
+                        <p class="text-[9px] text-amber-700 mt-1.5 leading-relaxed">📌 ไปที่ Google Apps Script → Deploy → New Deployment → Web App → Execute as: Me → Who has access: Anyone → คัดลอก URL มาวางที่นี่ แล้วกด "บันทึกตั้งค่า"</p>
+                    </div>
                     <div class="flex items-center justify-between bg-emerald-50 p-3 rounded-xl border border-emerald-100">
                         <span class="text-xs font-bold text-emerald-800">บันทึกประวัติและรูปลง Drive อัตโนมัติ</span>
                         <input type="checkbox" id="setting-tracking" onchange="updateQR()" class="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
@@ -432,6 +441,7 @@
     <script>
         // จำลองการเรียกฟังก์ชัน (Mock runner) สำหรับการดูพรีวิวแบบ Standalone
         if (typeof google === 'undefined') {
+            window._IS_MOCK_GAS = true; // ← flag บอกว่านี่คือ Mock ไม่ใช่ GAS จริง
             window.google = { script: { run: (function() {
                 function MockRunner(sCb, fCb) {
                     this.withSuccessHandler = function(cb) { return new MockRunner(cb, fCb); };
@@ -827,6 +837,42 @@
         }
 
         // ==========================================
+        // callGAS — helper: เลือกระหว่าง google.script.run (GAS) หรือ fetch (GitHub Pages)
+        // ==========================================
+        function isRunningOnGAS() {
+            // ตรวจสอบว่า google.script.run เป็นของจริง (ไม่ใช่ Mock)
+            return typeof google !== 'undefined' && 
+                   google.script && 
+                   google.script.run &&
+                   typeof google.script.run.withSuccessHandler === 'function' &&
+                   !window._IS_MOCK_GAS;
+        }
+
+        function getScriptUrl() {
+            // ดึง URL จาก input field ก่อน ถ้าไม่มีดึงจาก localStorage
+            var inputEl = document.getElementById('setting-script-url');
+            var url = (inputEl && inputEl.value.trim()) ? inputEl.value.trim() : (localStorage.getItem('qr_script_url') || '');
+            return url;
+        }
+
+        function callGASFetch(action, payload, onSuccess, onFailure) {
+            var scriptUrl = getScriptUrl();
+            if (!scriptUrl) {
+                if (onFailure) onFailure({ message: 'ยังไม่ได้ตั้งค่า Apps Script Web App URL\nกรุณาไปที่หน้า "ตั้งค่า" แล้วกรอก URL ก่อนครับ' });
+                return;
+            }
+            var body = JSON.stringify({ action: action, payload: payload });
+            fetch(scriptUrl, {
+                method: 'POST',
+                body: body,
+                headers: { 'Content-Type': 'text/plain' } // GAS doPost ต้องการ text/plain เพื่อหลีกเลี่ยง preflight CORS
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .catch(function(err) { if (onFailure) onFailure({ message: 'เชื่อมต่อไม่ได้: ' + err.message }); });
+        }
+
+        // ==========================================
         // downloadAndSaveToDrive — ดาวน์โหลด PNG + บันทึก Drive + บันทึกประวัติ
         // ==========================================
         function downloadAndSaveToDrive() {
@@ -868,14 +914,33 @@
             saveQR.getRawData("png").then(function(blob) {
                 var reader = new FileReader();
                 reader.onloadend = function() {
-                    google.script.run
-                    .withSuccessHandler(function(res) { 
+                    var base64data = reader.result;
+                    var successCb = function(res) { 
                         Swal.close(); 
                         Toast.fire({ icon: 'success', title: 'ดาวน์โหลด PNG + เซฟ Drive สำเร็จ!' }); 
                         loadStats(); 
-                    })
-                    .withFailureHandler(function(err) { Swal.close(); Swal.fire('ข้อผิดพลาด Drive', err.message || err, 'error'); })
-                    .uploadToDriveAndTrack(reader.result, dataToLog, currentType, workGroup, qrName);
+                    };
+                    var failureCb = function(err) { 
+                        Swal.close(); 
+                        Swal.fire('ข้อผิดพลาด Drive', (err && err.message) ? err.message : String(err), 'error'); 
+                    };
+
+                    if (isRunningOnGAS()) {
+                        // --- รันบน Google Apps Script: ใช้ google.script.run ตามเดิม ---
+                        google.script.run
+                            .withSuccessHandler(successCb)
+                            .withFailureHandler(failureCb)
+                            .uploadToDriveAndTrack(base64data, dataToLog, currentType, workGroup, qrName);
+                    } else {
+                        // --- รันบน GitHub Pages: ใช้ fetch() ไปยัง Web App URL ---
+                        callGASFetch('uploadToDriveAndTrack', {
+                            base64: base64data,
+                            data: dataToLog,
+                            type: currentType,
+                            group: workGroup,
+                            name: qrName
+                        }, successCb, failureCb);
+                    }
                 };
                 reader.readAsDataURL(blob);
             }).catch(function(err) { Swal.close(); Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PNG ได้', 'error'); });
@@ -986,7 +1051,8 @@
         function loadStats() {
             var tbody = document.getElementById('statsBody');
             tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center"><div class="spinner border-t-emerald-500"></div><br><span class="text-xs text-gray-500 mt-2 block">กำลังโหลดประวัติ...</span></td></tr>';
-            google.script.run.withSuccessHandler(function(data) {
+
+            var renderCb = function(data) {
                 _allStatsData = data || [];
                 _activeGroup = '';
                 if (!data || data.length === 0) {
@@ -1003,7 +1069,15 @@
                         : 'group-filter-btn px-3 py-1 rounded-lg text-xs font-bold border-2 border-transparent bg-white/70 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all';
                 });
                 renderStatsTable(data);
-            }).getScanStats();
+            };
+
+            if (isRunningOnGAS()) {
+                google.script.run.withSuccessHandler(renderCb).getScanStats();
+            } else {
+                callGASFetch('getScanStats', {}, renderCb, function(err) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-red-400 text-sm">⚠️ ' + ((err && err.message) ? err.message : 'เชื่อมต่อไม่ได้') + '</td></tr>';
+                });
+            }
         }
 
         function previewQRFromDrive(fileId, folderUrl) {
@@ -1012,6 +1086,11 @@
         }
 
         function fetchSettings() {
+            // โหลด Script URL จาก localStorage เสมอ (ใช้ได้ทั้ง GAS และ GitHub Pages)
+            var savedScriptUrl = localStorage.getItem('qr_script_url') || '';
+            var scriptUrlEl = document.getElementById('setting-script-url');
+            if (scriptUrlEl) scriptUrlEl.value = savedScriptUrl;
+
             google.script.run.withSuccessHandler(function(res) {
                 var sb = document.getElementById('sheet-status-box');
                 if (sb) { sb.innerText = res.sheetMessage; sb.className = 'p-3 rounded-xl text-xs font-bold mb-3 ' + (res.sheetReady ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'); }
@@ -1033,6 +1112,15 @@
         function saveSettings() {
             var btn = document.getElementById('btn-save-settings');
             var original = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> กำลังบันทึก...'; btn.disabled = true;
+
+            // บันทึก Script URL ลง localStorage เสมอ (ใช้ได้ทั้ง GAS และ GitHub Pages)
+            var scriptUrlEl = document.getElementById('setting-script-url');
+            if (scriptUrlEl && scriptUrlEl.value.trim()) {
+                localStorage.setItem('qr_script_url', scriptUrlEl.value.trim());
+            } else {
+                localStorage.removeItem('qr_script_url');
+            }
+
             var data = { 
                 driveId: document.getElementById('setting-drive').value, 
                 enableTracking: document.getElementById('setting-tracking').checked 
