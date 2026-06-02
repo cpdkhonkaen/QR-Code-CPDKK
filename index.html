@@ -5,51 +5,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator Pro</title>
-    <!-- [ข้อ 4] โหลด Tailwind แบบ async ไม่บล็อก render -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { 
-            --theme-color-1: #10b981; 
+            --theme-color-1: #10b981;
             --theme-color-2: #059669; 
             --theme-color-1-rgb: 16, 185, 129; 
-            --theme-color-2-rgb: 5, 150, 105; 
+            --theme-color-2-rgb: 5, 150, 105;
         }
         
-        body { font-family: 'K2D', sans-serif; background-color: #fdfbfb; background-image: radial-gradient(at 0% 0%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(var(--theme-color-2-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%); background-attachment: fixed; color: #334155; }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); }
-        .theme-gradient { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2)); }
-        .theme-text { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2)); background-size: 200% auto; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; }
-        .theme-border { border-color: var(--theme-color-1); }
-        .theme-bg-soft { background-color: color-mix(in srgb, var(--theme-color-1) 15%, white); }
-        .theme-text-solid { color: var(--theme-color-1); }
-        @keyframes shine { to { background-position: 200% center; } }
-        .btn-magic { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2)); transition: all 0.3s ease; }
-        .btn-magic:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 25px -5px color-mix(in srgb, var(--theme-color-2) 40%, transparent); }
-        #data-url::placeholder { color: #ef4444; font-weight: 500; }
-        input[type="file"] { display: none; }
-        input[type="text"], input[type="url"], input[type="tel"], input[type="email"], input[type="number"], textarea, select { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .tab-content { display: none; opacity: 0; transition: opacity 0.3s; }
-        .tab-content.active { display: flex; opacity: 1; }
-        #section-stats.active, #section-settings.active { display: block; opacity: 1; }
-        /* [ข้อ 3] QR preview wrapper ให้พอดีกับพื้นที่ฝั่งขวา */
-        #qr-code-wrapper svg, #qr-code-wrapper canvas { width: 100% !important; height: 100% !important; object-fit: contain; }
-        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { font-family: 'K2D', sans-serif;
+            background-color: #fdfbfb; background-image: radial-gradient(at 0% 0%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(var(--theme-color-2-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(var(--theme-color-1-rgb), 0.1) 0px, transparent 50%);
+            background-attachment: fixed; color: #334155; }
+        .glass-card { background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+        }
+        .theme-gradient { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2));
+        }
+        .theme-text { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2)); background-size: 200% auto; background-clip: text;
+            -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite;
+        }
+        .theme-border { border-color: var(--theme-color-1);
+        }
+        .theme-bg-soft { background-color: color-mix(in srgb, var(--theme-color-1) 15%, white);
+        }
+        .theme-text-solid { color: var(--theme-color-1);
+        }
+        @keyframes shine { to { background-position: 200% center;
+        } }
+        .btn-magic { background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2)); transition: all 0.3s ease;
+        }
+        .btn-magic:hover { opacity: 0.9; transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px color-mix(in srgb, var(--theme-color-2) 40%, transparent);
+        }
+        #data-url::placeholder { color: #ef4444; font-weight: 500;
+        }
+        input[type="file"] { display: none;
+        }
+        input[type="text"], input[type="url"], input[type="tel"], input[type="email"], input[type="number"], textarea, select { background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px); }
+        .tab-content { display: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .tab-content.active { display: flex; opacity: 1;
+        }
+        #section-stats.active, #section-settings.active { display: block; opacity: 1;
+        }
+        #qr-code-wrapper svg, #qr-code-wrapper canvas { width: 100% !important;
+            height: 100% !important; object-fit: contain; }
+        .spinner { border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top: 3px solid white; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg);
+        } }
 
-        /* icon สีสันในปุ่ม type-btn ให้คงสีของตัวเองแม้อยู่ใน active state */
-        .type-btn svg { flex-shrink: 0; }
-        .type-btn.active svg { opacity: 1; }
+        .type-btn svg { flex-shrink: 0;
+        }
+        .type-btn.active svg { opacity: 1;
+        }
 
         @media (max-width: 768px) {
-            .mobile-cards thead { display: none; }
-            .mobile-cards tbody tr { display: flex; flex-direction: column; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 1rem; background: white; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-            .mobile-cards tbody td { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border: none !important; }
-            .mobile-cards tbody td::before { content: attr(data-label); font-weight: 600; color: #6b7280; font-size: 0.8rem; margin-right: 1rem; }
-            .mobile-cards tbody td:last-child { margin-top: 0.5rem; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
-            .mobile-cards tbody td:last-child::before { display: none; }
+            .mobile-cards thead { display: none;
+            }
+            .mobile-cards tbody tr { display: flex; flex-direction: column;
+                border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 1rem; background: white; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            }
+            .mobile-cards tbody td { display: flex; justify-content: space-between;
+                align-items: center; padding: 0.5rem 0; border: none !important; }
+            .mobile-cards tbody td::before { content: attr(data-label);
+                font-weight: 600; color: #6b7280; font-size: 0.8rem; margin-right: 1rem; }
+            .mobile-cards tbody td:last-child { margin-top: 0.5rem;
+                justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+            .mobile-cards tbody td:last-child::before { display: none;
+            }
         }
     </style>
 </head>
@@ -100,7 +130,6 @@
                         เลือกประเภทข้อมูล
                     </h2>
 
-                    <!-- กลุ่มงาน + ชื่อ QR Code -->
                     <div id="work-group-section" class="mb-4 relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3" style="display:none">
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
@@ -115,14 +144,14 @@
                                     <option value="กพส.">กพส.</option>
                                     <option value="กธส.">กธส.</option>
                                     <option value="กตส.">กตส.</option>
-                                    <option value="กสส. 1">กสส. 1</option>
-                                    <option value="กสส. 2">กสส. 2</option>
-                                    <option value="กสส. 3">กสส. 3</option>
-                                    <option value="กสส. 4">กสส. 4</option>
-                                    <option value="กสส. 5">กสส. 5</option>
-                                    <option value="กสส. 6">กสส. 6</option>
-                                    <option value="กสส. 7">กสส. 7</option>
-                                    <option value="กสส. 8">กสส. 8</option>
+                                    <option value="กสส.1">กสส. 1</option>
+                                    <option value="กสส.2">กสส. 2</option>
+                                    <option value="กสส.3">กสส. 3</option>
+                                    <option value="กสส.4">กสส. 4</option>
+                                    <option value="กสส.5">กสส. 5</option>
+                                    <option value="กสส.6">กสส. 6</option>
+                                    <option value="กสส.7">กสส. 7</option>
+                                    <option value="กสส.8">กสส. 8</option>
                                     <option value="นิคมฯ">นิคมฯ</option>
                                 </select>
                                 <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -136,7 +165,6 @@
                             <input type="text" id="qr-name" placeholder="ตั้งชื่อเพื่อความจำง่าย..." class="w-full px-4 py-2.5 rounded-xl border-0 ring-2 ring-emerald-200 focus:ring-emerald-400 outline-none transition-all text-sm font-medium bg-white/80">
                         </div>
                     </div>
-                    <!-- /กลุ่มงาน + ชื่อ QR Code -->
 
                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4 relative z-10">
                         <button onclick="setDataType('url')" id="type-url" class="type-btn active flex flex-col items-center justify-center p-2 rounded-xl border-2 theme-border theme-bg-soft theme-text-solid shadow-sm transition-all">
@@ -273,7 +301,6 @@
                                 โลโก้แบรนด์
                             </h2>
                             <div class="flex flex-col gap-3">
-                                
                                 <div id="preset-logos-section" class="flex flex-col gap-1.5">
                                     <span class="text-xs font-semibold text-gray-500">เลือกโลโก้ที่ใช้บ่อย:</span>
                                     <div id="preset-logos-container" class="flex flex-wrap gap-2 min-h-[3rem] items-center">
@@ -304,13 +331,11 @@
                 </div>
             </div>
 
-            <!-- QR Preview Panel -->
             <div class="lg:w-1/4">
                 <div class="sticky top-20 glass-card rounded-2xl p-3 sm:p-4 flex flex-col items-center shadow-xl border-white">
                     <div class="w-full border-b border-gray-100 pb-2 mb-3">
                         <h2 class="text-sm font-bold text-gray-800 text-center">พรีวิว QR Code</h2>
                     </div>
-                    <!-- [ข้อ 3] ลด padding และกำหนดขนาด max-w ให้พอดีกับพื้นที่ -->
                     <div id="canvas-container" class="bg-white p-2 sm:p-3 rounded-xl shadow-inner border border-gray-100 mb-3 w-full max-w-[220px] sm:max-w-[240px] lg:max-w-full aspect-square relative flex items-center justify-center transition-all hover:scale-[1.02] duration-300">
                         <div id="qr-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
                             <svg class="w-8 h-8 mb-1 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
@@ -341,7 +366,6 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
                             ดาวน์โหลด PNG + เซฟลง Drive
                         </button>
-
                         
                         <button onclick="generateAndDownloadQR('svg')" class="w-full bg-white text-gray-700 font-semibold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 flex justify-center items-center gap-2 text-xs">โหลดไฟล์เวกเตอร์ (SVG)</button>
                     </div>
@@ -358,7 +382,6 @@
                     รีเฟรชประวัติ
                 </button>
             </div>
-            <!-- ตัวกรองกลุ่มงาน -->
             <div class="flex flex-wrap items-center gap-2 mb-4">
                 <span class="text-xs font-semibold text-gray-500 flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"></path></svg>
@@ -370,7 +393,7 @@
             </div>
             <div id="stats-count" class="text-xs text-gray-400 mb-3 font-medium"></div>
             <div class="overflow-x-auto sm:rounded-xl sm:border sm:border-white sm:bg-white/40 sm:shadow-sm">
-                <table class="w-full text-left border-collapse min-w-full sm:min-w-[800px] mobile-cards">
+                <table class="w-full text-left border-collapse min-w-full sm:minw-[800px] mobile-cards">
                     <thead>
                         <tr class="theme-bg-soft theme-text-solid text-xs border-b border-white">
                             <th class="p-3 font-semibold">ชื่อ QR Code</th>
@@ -407,7 +430,7 @@
                     </h3>
                     <div class="bg-blue-50 text-blue-800 p-3 rounded-xl text-[10px] sm:text-xs mb-3 border border-blue-100">ระบบจะสร้างโฟลเดอร์ย่อยเก็บภาพ QR ลงโฟลเดอร์หลักนี้ (แชร์โฟลเดอร์เป็น Anyone with link > Viewer ด้วยนะครับ)</div>
                     <input type="text" id="setting-drive" placeholder="รหัส Folder ID ของ Google Drive" class="w-full px-4 py-2 rounded-xl border ring-1 ring-gray-200 outline-none mb-3 text-sm">
-                    <!-- [GitHub Pages] Apps Script Web App URL สำหรับเรียกผ่าน fetch() เมื่อไม่ได้รันบน GAS -->
+                    
                     <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3">
                         <label class="block text-[10px] font-bold text-amber-800 mb-1.5 flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -434,7 +457,6 @@
         <p class="text-[10px] sm:text-xs text-gray-400 font-medium"><span class="font-bold theme-text">นายนิธิกร เสริมปรุงสุข</span> นักวิชาการสหกรณ์ &nbsp;|&nbsp; เวอร์ชัน 1.0 &nbsp;|&nbsp; สงวนลิขสิทธิ์ &copy; 2026</p>
     </footer>
 
-    <!-- โหลด Library หลัก — ไม่ใช้ defer เพราะ Google Apps Script HtmlService ไม่รองรับ -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
@@ -459,7 +481,7 @@
             })() } };
         }
 
-        // [ข้อ 4] ใช้ตัวแปร global แต่ init หลัง defer scripts โหลดเสร็จ
+        // ใช้ตัวแปร global แต่ init หลัง defer scripts โหลดเสร็จ
         var Toast;
         var currentType = 'url';
         var uploadedLogo = null;
@@ -467,7 +489,6 @@
         var qrCode = null;
         var currentUserRole = 'guest';
 
-        // init ระบบทั้งหมด — scripts โหลด synchronous แล้ว จึงพร้อมใช้งานทันที
         function initApp() {
             if (typeof Swal === 'undefined' || typeof QRCodeStyling === 'undefined') {
                 // fallback: รอในกรณีที่ยังโหลดไม่เสร็จ
@@ -487,7 +508,6 @@
             loadPresetLogos();
         }
 
-        // เรียก initApp เมื่อ DOM พร้อม (scripts โหลดแบบ synchronous แล้ว)
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
@@ -510,7 +530,6 @@
             }
         }
 
-        // เลือกโลโก้ Preset
         function selectPresetLogo(imgEl) {
             var base64 = imgEl.getAttribute('data-base64');
             if (!base64) return;
@@ -527,17 +546,14 @@
             updateQR();
         }
 
-        // โหลด Preset Logos — ใช้ Base64 ที่ฝังไว้ในโค้ดโดยตรง (รองรับ GitHub Pages)
         function loadPresetLogos() {
             var PRESET_LOGOS = [
-                { label: 'CPD สี', base64: 'data:image/png;base64,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' }
+                { label: 'CPD สี', base64: 'data:image/png;base64,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' }
             ];
-
             var container = document.getElementById('preset-logos-container');
             var loadingEl = document.getElementById('preset-logos-loading');
 
             if (loadingEl) loadingEl.style.display = 'none';
-
             PRESET_LOGOS.forEach(function(item) {
                 var wrapper = document.createElement('div');
                 wrapper.className = 'flex flex-col items-center gap-1';
@@ -558,6 +574,7 @@
                 container.appendChild(wrapper);
             });
         }
+
         function checkAuthOnLoad() {
             var role = sessionStorage.getItem('qr_auth_role');
             if (role) {
@@ -572,7 +589,6 @@
             document.getElementById('nav-settings').style.display = 'none';
             document.getElementById('nav-stats').style.display = 'none';
 
-            // ซ่อน กลุ่มงาน + ชื่อ QR Code สำหรับ Guest
             var workGroupSection = document.getElementById('work-group-section');
             if(workGroupSection) workGroupSection.style.display = 'none';
 
@@ -580,7 +596,6 @@
             if(btnDownloadAndDrive) btnDownloadAndDrive.classList.add('hidden');
             var btnDownloadPng = document.getElementById('btn-download-png');
             if(btnDownloadPng) btnDownloadPng.classList.remove('hidden');
-            
             if (document.getElementById('section-settings').classList.contains('active') || 
                 document.getElementById('section-stats').classList.contains('active')) {
                 switchTab('create');
@@ -588,7 +603,6 @@
         }
 
         function handleAuth() {
-            // Guard: ถ้า Swal ยังโหลดไม่เสร็จ (defer script) ให้รอแล้วลองใหม่
             if (typeof Swal === 'undefined') {
                 var retryCount = 0;
                 var waitSwal = setInterval(function() {
@@ -604,10 +618,9 @@
                 return;
             }
             if (currentUserRole !== 'guest') {
-                // ออกจากระบบโดยไม่ reload หน้า เพื่อป้องกันหน้าจอขาว
                 sessionStorage.removeItem('qr_auth_role');
                 currentUserRole = 'guest';
-                // รีเซ็ตปุ่ม Auth กลับสู่สถานะ Login
+                
                 var btnMobile = document.getElementById('auth-btn');
                 var btnDesktop = document.getElementById('auth-btn-desktop');
                 if (btnMobile) {
@@ -639,16 +652,26 @@
                             return false;
                         }
                         return new Promise((resolve) => {
-                            google.script.run
-                                .withSuccessHandler(function(res) {
+                            if (isRunningOnGAS()) {
+                                google.script.run
+                                    .withSuccessHandler(function(res) {
+                                        if (res.success) resolve(res);
+                                        else { Swal.showValidationMessage(res.message); resolve(); }
+                                    })
+                                    .withFailureHandler(function() {
+                                        Swal.showValidationMessage('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                                        resolve();
+                                    })
+                                    .verifyLogin(pwd);
+                            } else {
+                                callGASFetch('verifyLogin', pwd, function(res) {
                                     if (res.success) resolve(res);
                                     else { Swal.showValidationMessage(res.message); resolve(); }
-                                })
-                                .withFailureHandler(function() {
-                                    Swal.showValidationMessage('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                                }, function(err) {
+                                    Swal.showValidationMessage(err.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
                                     resolve();
-                                })
-                                .verifyLogin(pwd);
+                                });
+                            }
                         });
                     }
                 }).then((result) => {
@@ -683,26 +706,23 @@
             var btnDownloadPng = document.getElementById('btn-download-png');
             var workGroupSection = document.getElementById('work-group-section');
             var btnDownloadAndDrive = document.getElementById('btn-download-and-drive');
+            
             if (role === 'admin') {
-                // admin: เห็นทุกเมนู + แสดงกลุ่มงาน+ชื่อ QR
                 document.getElementById('nav-settings').style.display = 'flex';
                 document.getElementById('nav-stats').style.display = 'block';
                 if(btnDownloadPng) btnDownloadPng.classList.add('hidden');
                 if(btnDownloadAndDrive) btnDownloadAndDrive.classList.remove('hidden');
                 if(workGroupSection) workGroupSection.style.display = 'grid';
             } else if (role === 'user') {
-                // user: เห็นประวัติ ไม่เห็นตั้งค่า + แสดงกลุ่มงาน+ชื่อ QR
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-stats').style.display = 'block';
                 if(btnDownloadPng) btnDownloadPng.classList.add('hidden');
                 if(btnDownloadAndDrive) btnDownloadAndDrive.classList.remove('hidden');
                 if(workGroupSection) workGroupSection.style.display = 'grid';
-                // ถ้ากำลังอยู่หน้าตั้งค่า ให้กลับหน้าสร้าง
                 if (document.getElementById('section-settings').classList.contains('active')) {
                     switchTab('create');
                 }
             } else {
-                // guest: ซ่อนทั้งประวัติและตั้งค่า + ซ่อนกลุ่มงาน+ชื่อ QR
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-stats').style.display = 'none';
                 if(btnDownloadPng) btnDownloadPng.classList.remove('hidden');
@@ -757,7 +777,8 @@
             updateQR(); 
         }
 
-        function updateLogoSizeLabel() { document.getElementById('logo-size-label').innerText = Math.round(document.getElementById('logoSize').value * 100) + '%'; }
+        function updateLogoSizeLabel() { document.getElementById('logo-size-label').innerText = Math.round(document.getElementById('logoSize').value * 100) + '%';
+        }
 
         function getQRData() {
             if (currentType === 'url') return document.getElementById('data-url').value;
@@ -775,16 +796,18 @@
         }
 
         function updateQR() {
-            if (!qrCode) return; // [ข้อ 4] Guard: ยังไม่ init
+            if (!qrCode) return;
             var isTracking = document.getElementById('setting-tracking') ?
             document.getElementById('setting-tracking').checked : false;
             var data = getQRData();
-            if (!data && currentType !== 'url') { document.getElementById('qr-empty-state').classList.remove('hidden'); document.getElementById('qr-code-wrapper').innerHTML = ""; return; }
+            if (!data && currentType !== 'url') { document.getElementById('qr-empty-state').classList.remove('hidden'); document.getElementById('qr-code-wrapper').innerHTML = ""; return;
+            }
             document.getElementById('qr-empty-state').classList.add('hidden');
             var wrapper = document.getElementById('qr-code-wrapper');
             wrapper.innerHTML = "";
             var safeData = data || "";
-            try { safeData = unescape(encodeURIComponent(safeData)); } catch (e) {}
+            try { safeData = unescape(encodeURIComponent(safeData));
+            } catch (e) {}
 
             var cornersType = document.getElementById('cornersType').value;
             var qrColorDark = document.getElementById('qrColorDark').value;
@@ -801,28 +824,23 @@
             if (isTracking && data) document.getElementById('tracking-notice').classList.remove('hidden'); else document.getElementById('tracking-notice').classList.add('hidden');
         }
 
-        // ==========================================
-        // generateAndDownloadQR — ดาวน์โหลดอย่างเดียว ไม่บันทึก Sheet
-        // ==========================================
         function generateAndDownloadQR(ext) {
             var dataToLog = getQRData();
-
             var qrColorDark = document.getElementById('qrColorDark').value;
             var qrColorLight = document.getElementById('qrColorLight').value;
             var dotsType = document.getElementById('dotsType').value;
             var cornersType = document.getElementById('cornersType').value;
             var logoSize = parseFloat(document.getElementById('logoSize').value);
             var safeData = dataToLog || "";
-            try { safeData = unescape(encodeURIComponent(safeData)); } catch(e) {}
+            try { safeData = unescape(encodeURIComponent(safeData));
+            } catch(e) {}
 
-            // SVG: ดาวน์โหลดจาก qrCode ตัว preview โดยตรง ไม่บันทึก Sheet
             if (ext === 'svg') {
                 qrCode.download({ name: "QR_" + Date.now(), extension: 'svg' });
                 Toast.fire({ icon: 'success', title: 'ดาวน์โหลด SVG สำเร็จ!' });
                 return;
             }
 
-            // PNG: สร้างและดาวน์โหลดทันที ไม่บันทึก Sheet
             var downloadQR = new QRCodeStyling({
                 width: downloadSize, height: downloadSize, type: "png", data: safeData,
                 image: uploadedLogo || "",
@@ -837,10 +855,9 @@
         }
 
         // ==========================================
-        // callGAS — helper: เลือกระหว่าง google.script.run (GAS) หรือ fetch (GitHub Pages)
+        // ตรวจสอบสถานะการรัน
         // ==========================================
         function isRunningOnGAS() {
-            // ตรวจสอบว่า google.script.run เป็นของจริง (ไม่ใช่ Mock)
             return typeof google !== 'undefined' && 
                    google.script && 
                    google.script.run &&
@@ -848,14 +865,8 @@
                    !window._IS_MOCK_GAS;
         }
 
-        // ============================================================
-        // *** ตั้งค่า Web App URL ตรงนี้เลย — ไม่ต้องให้ user กรอกเอง ***
-        // วาง URL จาก GAS Deploy แทนค่า YOUR_WEB_APP_URL_HERE
-        // ============================================================
         var GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxSvK6kKurl0_Loc5j_dPXu-vJsg3BDBMjE8nv3RKg1kBXAwz8yjxaoEEwXKc3QCd99UQ/exec';
-
         function getScriptUrl() {
-            // ลำดับความสำคัญ: 1) hardcode ในโค้ด  2) input field  3) localStorage
             if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== 'YOUR_WEB_APP_URL_HERE') {
                 return GAS_WEB_APP_URL;
             }
@@ -867,14 +878,14 @@
         function callGASFetch(action, payload, onSuccess, onFailure) {
             var scriptUrl = getScriptUrl();
             if (!scriptUrl) {
-                if (onFailure) onFailure({ message: 'ยังไม่ได้ตั้งค่า Web App URL\nกรุณาเปิดไฟล์ Index.html แล้วแก้ GAS_WEB_APP_URL ให้เป็น URL จาก GAS Deploy ครับ' });
+                if (onFailure) onFailure({ message: 'ยังไม่ได้ตั้งค่า Web App URL\nกรุณาเปิดไฟล์ Index.html แล้วแก้ GAS_WEB_APP_URL' });
                 return;
             }
             var body = JSON.stringify({ action: action, payload: payload });
             fetch(scriptUrl, {
                 method: 'POST',
                 body: body,
-                headers: { 'Content-Type': 'text/plain' } // GAS doPost ต้องการ text/plain เพื่อหลีกเลี่ยง preflight CORS
+                headers: { 'Content-Type': 'text/plain' }
             })
             .then(function(response) { return response.json(); })
             .then(function(data) { if (onSuccess) onSuccess(data); })
@@ -882,11 +893,12 @@
         }
 
         // ==========================================
-        // downloadAndSaveToDrive — ดาวน์โหลด PNG + บันทึก Drive + บันทึกประวัติ
+        // ดาวน์โหลด + บันทึก Drive & Sheet
         // ==========================================
         function downloadAndSaveToDrive() {
             var dataToLog = getQRData();
-            if (!dataToLog && currentType !== 'url') { Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลปลายทางให้ครบก่อนบันทึกครับ', 'warning'); return; }
+            if (!dataToLog && currentType !== 'url') { Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลปลายทางให้ครบก่อนบันทึกครับ', 'warning'); return;
+            }
             var workGroup = document.getElementById('work-group').value;
             var qrName = document.getElementById('qr-name').value.trim();
             if (!qrName) {
@@ -901,7 +913,8 @@
             var cornersType = document.getElementById('cornersType').value;
             var logoSize = parseFloat(document.getElementById('logoSize').value);
             var safeData = dataToLog || "";
-            try { safeData = unescape(encodeURIComponent(safeData)); } catch(e) {}
+            try { safeData = unescape(encodeURIComponent(safeData));
+            } catch(e) {}
 
             var saveQR = new QRCodeStyling({
                 width: downloadSize, height: downloadSize, type: "png", data: safeData,
@@ -912,20 +925,14 @@
                 cornersDotOptions: { type: (cornersType === 'square' ? 'square' : 'dot'), color: qrColorDark },
                 imageOptions: { crossOrigin: "anonymous", margin: Math.round(downloadSize * 0.008), imageSize: logoSize }
             });
-
-            // Step 1: ดาวน์โหลดไฟล์ PNG ก่อนทันที
             saveQR.download({ name: "QR_" + Date.now(), extension: 'png' });
             Toast.fire({ icon: 'success', title: 'กำลังดาวน์โหลด PNG...' });
 
-            // Step 2: บันทึก Drive + บันทึกประวัติ
             Swal.fire({ title: 'กำลังบันทึกลง Drive...', html: 'กรุณารอสักครู่ ระบบกำลังสร้างโฟลเดอร์', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
-
             saveQR.getRawData("png").then(function(blob) {
                 var reader = new FileReader();
                 reader.onloadend = function() {
-                    // ตัด prefix "data:image/png;base64," ออก ส่งเฉพาะ base64 순수 ให้ GAS
-                    var fullBase64 = reader.result;
-                    var base64data = fullBase64.indexOf(',') !== -1 ? fullBase64.split(',')[1] : fullBase64;
+                    var base64data = reader.result;
                     var successCb = function(res) { 
                         Swal.close(); 
                         Toast.fire({ icon: 'success', title: 'ดาวน์โหลด PNG + เซฟ Drive สำเร็จ!' }); 
@@ -937,15 +944,13 @@
                     };
 
                     if (isRunningOnGAS()) {
-                        // --- รันบน Google Apps Script: ใช้ google.script.run ตามเดิม ---
                         google.script.run
                             .withSuccessHandler(successCb)
                             .withFailureHandler(failureCb)
                             .uploadToDriveAndTrack(base64data, dataToLog, currentType, workGroup, qrName);
                     } else {
-                        // --- รันบน GitHub Pages: ส่ง payload ให้ตรงกับ parameter ของ GAS ---
                         callGASFetch('uploadToDriveAndTrack', {
-                            base64: base64data,        // pure base64 (ไม่มี prefix)
+                            base64: base64data,
                             data: dataToLog,
                             type: currentType,
                             group: workGroup,
@@ -970,7 +975,6 @@
 
         var _allStatsData = [];
         var _activeGroup = '';
-
         function formatDateThai(raw) {
             if (!raw) return '-';
             var monthsTh = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
@@ -981,11 +985,13 @@
                 day  = parseInt(slashMatch[1], 10);
                 mon  = parseInt(slashMatch[2], 10) - 1;
                 year = parseInt(slashMatch[3], 10);
-                if (slashMatch[4] !== undefined) { hour = parseInt(slashMatch[4], 10); min = parseInt(slashMatch[5], 10); }
+                if (slashMatch[4] !== undefined) { hour = parseInt(slashMatch[4], 10);
+                min = parseInt(slashMatch[5], 10); }
             } else {
                 var dt = new Date(raw);
                 if (!isNaN(dt.getTime())) {
-                    day = dt.getDate(); mon = dt.getMonth(); year = dt.getFullYear();
+                    day = dt.getDate();
+                    mon = dt.getMonth(); year = dt.getFullYear();
                     hour = dt.getHours(); min = dt.getMinutes();
                 }
             }
@@ -1003,7 +1009,6 @@
             var groups = {};
             data.forEach(function(row) { if (row[2]) groups[row[2]] = (groups[row[2]] || 0) + 1; });
             var container = document.getElementById('group-filter-btns');
-            // เคลียร์ปุ่มเก่ายกเว้น "ทั้งหมด"
             var allBtn = container.querySelector('[data-group=""]');
             container.innerHTML = '';
             allBtn.textContent = 'ทั้งหมด (' + data.length + ')';
@@ -1043,7 +1048,6 @@
             data.slice().reverse().forEach(function(row) {
                 var tr = document.createElement('tr');
                 tr.className = "hover:bg-gray-50/50 transition-colors";
-                // row[0]=ชื่อ QR Code, row[1]=ประเภท, row[2]=กลุ่มงาน, row[3]=ข้อมูล, row[4]=วันที่, row[5]=folderUrl, row[6]=fileId
                 var actions = row[6]
                     ? '<button onclick="previewQRFromDrive(\'' + row[6] + '\', \'' + row[5] + '\')" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white p-1.5 rounded-lg shadow-sm transition-all" title="ดูรูป QR"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>'
                     : '<span class="text-[10px] text-gray-400 italic">ไม่ได้บันทึก Drive</span>';
@@ -1062,7 +1066,6 @@
         function loadStats() {
             var tbody = document.getElementById('statsBody');
             tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center"><div class="spinner border-t-emerald-500"></div><br><span class="text-xs text-gray-500 mt-2 block">กำลังโหลดประวัติ...</span></td></tr>';
-
             var renderCb = function(data) {
                 _allStatsData = data || [];
                 _activeGroup = '';
@@ -1072,7 +1075,6 @@
                     return;
                 }
                 buildGroupFilterBtns(data);
-                // reset ปุ่ม "ทั้งหมด" ให้ active
                 document.querySelectorAll('.group-filter-btn').forEach(function(b) {
                     var isAll = b.getAttribute('data-group') === '';
                     b.className = isAll
@@ -1096,13 +1098,15 @@
             Swal.fire({ title: '<span class="text-emerald-600 text-base">พรีวิว QR Code</span>', html: '<div class="flex flex-col items-center"><img src="' + imageUrl + '" class="w-48 h-48 sm:w-56 sm:h-56 mb-3 rounded-lg shadow-md border object-contain"><p class="text-[10px] sm:text-xs text-gray-500 mb-2">รูปภาพถูกเก็บไว้ใน Drive ของคุณเรียบร้อยแล้ว</p></div>', showCancelButton: true, confirmButtonText: '📂 เปิดโฟลเดอร์', cancelButtonText: '❌ ปิด', confirmButtonColor: '#10b981', cancelButtonColor: '#9ca3af' }).then(function(result) { if (result.isConfirmed) { window.open(folderUrl, '_blank'); } });
         }
 
+        // ==========================================
+        // อัปเดตฟังก์ชันฝั่งตั้งค่า ให้เรียกใช้งานผ่าน callGASFetch ได้
+        // ==========================================
         function fetchSettings() {
-            // โหลด Script URL จาก localStorage เสมอ (ใช้ได้ทั้ง GAS และ GitHub Pages)
             var savedScriptUrl = localStorage.getItem('qr_script_url') || '';
             var scriptUrlEl = document.getElementById('setting-script-url');
             if (scriptUrlEl) scriptUrlEl.value = savedScriptUrl;
 
-            google.script.run.withSuccessHandler(function(res) {
+            var successCb = function(res) {
                 var sb = document.getElementById('sheet-status-box');
                 if (sb) { sb.innerText = res.sheetMessage; sb.className = 'p-3 rounded-xl text-xs font-bold mb-3 ' + (res.sheetReady ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'); }
                 if (res.sheetReady) document.getElementById('btn-setup-sheet').classList.add('hidden');
@@ -1111,20 +1115,35 @@
                 document.getElementById('setting-drive').value = res.driveId || '';
                 document.getElementById('setting-tracking').checked = res.enableTracking || false;
                 updateQR();
-            }).loadSettings();
+            };
+
+            if (isRunningOnGAS()) {
+                google.script.run.withSuccessHandler(successCb).loadSettings();
+            } else {
+                callGASFetch('loadSettings', {}, successCb, function(err) {
+                    console.error('Failed to load settings:', err);
+                });
+            }
         }
 
         function setupSheet() { 
             var btn = document.getElementById('btn-setup-sheet');
             var original = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> กำลังจัดการ...'; btn.disabled = true;
-            google.script.run.withSuccessHandler(function() { fetchSettings(); Toast.fire({ icon: 'success', title: 'จัดรูปแบบตารางสำเร็จ' }); btn.innerHTML = original; btn.disabled = false; }).setupSheet();
+            
+            var successCb = function() { fetchSettings(); Toast.fire({ icon: 'success', title: 'จัดรูปแบบตารางสำเร็จ' }); btn.innerHTML = original; btn.disabled = false; };
+            var failureCb = function(err) { Toast.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด: ' + (err.message||'ไม่ทราบสาเหตุ') }); btn.innerHTML = original; btn.disabled = false; };
+
+            if (isRunningOnGAS()) {
+                google.script.run.withSuccessHandler(successCb).withFailureHandler(failureCb).setupSheet();
+            } else {
+                callGASFetch('setupSheet', {}, successCb, failureCb);
+            }
         }
         
         function saveSettings() {
             var btn = document.getElementById('btn-save-settings');
             var original = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> กำลังบันทึก...'; btn.disabled = true;
-
-            // บันทึก Script URL ลง localStorage เสมอ (ใช้ได้ทั้ง GAS และ GitHub Pages)
+            
             var scriptUrlEl = document.getElementById('setting-script-url');
             if (scriptUrlEl && scriptUrlEl.value.trim()) {
                 localStorage.setItem('qr_script_url', scriptUrlEl.value.trim());
@@ -1136,18 +1155,40 @@
                 driveId: document.getElementById('setting-drive').value, 
                 enableTracking: document.getElementById('setting-tracking').checked 
             };
-            google.script.run.withSuccessHandler(function(res) { 
+
+            var successCb = function(res) { 
                 Toast.fire({ icon: 'success', title: 'บันทึกการตั้งค่าเรียบร้อย' }); 
                 fetchSettings(); 
                 btn.innerHTML = original; 
                 btn.disabled = false; 
-            }).saveSettings(data);
+            };
+            var failureCb = function(err) {
+                Toast.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด: ' + (err.message||'ไม่ทราบสาเหตุ') });
+                btn.innerHTML = original;
+                btn.disabled = false;
+            };
+
+            if (isRunningOnGAS()) {
+                google.script.run.withSuccessHandler(successCb).withFailureHandler(failureCb).saveSettings(data);
+            } else {
+                callGASFetch('saveSettings', data, successCb, failureCb);
+            }
         }
 
         function testConnection() {
             var btn = document.getElementById('btn-test-conn');
             var original = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> ทดสอบ...'; btn.disabled = true; document.getElementById('conn-result').innerHTML = '';
-            google.script.run.withSuccessHandler(function(res) { btn.innerHTML = original; btn.disabled = false; document.getElementById('conn-result').innerHTML = '<div class="p-2.5 rounded-xl flex items-center gap-2 text-xs ' + (res.drive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') + ' border border-white"><span class="w-1.5 h-1.5 rounded-full flex-shrink-0 ' + (res.drive ? 'bg-green-500' : 'bg-red-500') + '"></span>' + res.driveMsg + '</div>'; }).testConnection({ driveId: document.getElementById('setting-drive').value });
+            
+            var data = { driveId: document.getElementById('setting-drive').value };
+
+            var successCb = function(res) { btn.innerHTML = original; btn.disabled = false; document.getElementById('conn-result').innerHTML = '<div class="p-2.5 rounded-xl flex items-center gap-2 text-xs ' + (res.drive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') + ' border border-white"><span class="w-1.5 h-1.5 rounded-full flex-shrink-0 ' + (res.drive ? 'bg-green-500' : 'bg-red-500') + '"></span>' + res.driveMsg + '</div>'; };
+            var failureCb = function(err) { btn.innerHTML = original; btn.disabled = false; document.getElementById('conn-result').innerHTML = '<div class="text-red-500 text-xs">เชื่อมต่อล้มเหลว: ' + err.message + '</div>'; };
+
+            if (isRunningOnGAS()) {
+                google.script.run.withSuccessHandler(successCb).withFailureHandler(failureCb).testConnection(data);
+            } else {
+                callGASFetch('testConnection', data, successCb, failureCb);
+            }
         }
 
         function generatePromptPayPayload(id, amount) {
@@ -1157,7 +1198,8 @@
             var ppa = (tag === "01") ? '0066' + t.substring(1) : t;
             var mid = "0016A000000677010111" + tag + String(ppa.length).padStart(2, '0') + ppa;
             var p = "00020101021129" + String(mid.length).padStart(2, '0') + mid + "5802TH5303764";
-            if (amount > 0) { var s = parseFloat(amount).toFixed(2); p += "54" + String(s.length).padStart(2, '0') + s; }
+            if (amount > 0) { var s = parseFloat(amount).toFixed(2);
+            p += "54" + String(s.length).padStart(2, '0') + s; }
             p += "6304";
             var crc = 0xFFFF;
             for (var i = 0; i < p.length; i++) {
