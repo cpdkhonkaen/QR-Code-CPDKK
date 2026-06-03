@@ -8,7 +8,7 @@
     <!-- [ข้อ 4] โหลด Tailwind แบบ async ไม่บล็อก render -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { 
@@ -64,7 +64,7 @@
                         <img src="https://img2.pic.in.th/393a2076f179a3823.png" alt="Logo CPDKK" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
                         <span class="font-bold text-lg sm:text-xl tracking-tight theme-text">QR Code CPDKK</span>
                     </div>
-                    <button id="auth-btn" onclick="handleAuth()" class="sm:hidden px-3 py-1.5 bg-white text-emerald-600 rounded-lg font-bold text-xs border border-gray-200 shadow-sm transition-all">เข้าสู่ระบบ</button>
+                    <button id="auth-btn" onclick="handleAuth()" class="sm:hidden px-3 py-1.5 bg-white text-emerald-600 rounded-lg font-bold text-xs border border-gray-200 shadow-sm transition-all">ADMIN</button>
                 </div>
 
                 <div class="flex bg-white/50 p-1 rounded-xl border border-white shadow-sm text-xs sm:text-sm overflow-x-auto w-full sm:w-auto justify-center mx-auto sm:mx-0">
@@ -83,7 +83,7 @@
 
                 <button id="auth-btn-desktop" onclick="handleAuth()" class="hidden sm:flex px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-sm border border-emerald-100 hover:bg-emerald-100 shadow-sm transition-all items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-                    <span>เข้าสู่ระบบ</span>
+                    <span>ADMIN</span>
                 </button>
             </div>
         </div>
@@ -230,6 +230,51 @@
                         <div>
                             <h2 class="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
                                 <span class="theme-gradient text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">2</span>
+                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                                โลโก้แบรนด์
+                            </h2>
+                            <div class="flex flex-col gap-3">
+
+                                <!-- Upload Button — เด่นอยู่บนสุด -->
+                                <label for="logoInput" class="cursor-pointer btn-magic text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all text-sm flex items-center justify-center gap-2 border border-white/20">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    อัปโหลดโลโก้ด้วยตนเอง
+                                </label>
+                                <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+
+                                <!-- Divider -->
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-px bg-gray-200"></div>
+                                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">หรือ</span>
+                                    <div class="flex-1 h-px bg-gray-200"></div>
+                                </div>
+
+                                <div id="preset-logos-section" class="flex flex-col gap-1.5">
+                                    <span class="text-xs font-semibold text-gray-500">เลือกโลโก้ที่ใช้บ่อย:</span>
+                                    <div id="preset-logos-container" class="flex flex-wrap gap-2 min-h-[3rem] items-center">
+                                        <div id="preset-logos-loading" class="flex items-center gap-1.5">
+                                            <span class="spinner border-t-emerald-500 w-4 h-4 border-[2px]"></span>
+                                            <span class="text-[10px] text-gray-400">กำลังโหลด...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="removeLogo()" id="removeLogoBtn" class="hidden px-4 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all border border-red-100">ลบโลโก้ออก</button>
+                                
+                                <div id="logo-size-container" class="hidden w-full bg-white/50 p-3 rounded-xl border border-white mt-1">
+                                    <label class="flex justify-between text-xs font-semibold text-gray-700 mb-2">
+                                        <span>ปรับขนาดโลโก้</span>
+                                        <span id="logo-size-label" class="theme-text-solid font-bold">40%</span>
+                                    </label>
+                                    <input type="range" id="logoSize" min="0.1" max="0.6" step="0.05" value="0.4" oninput="updateLogoSizeLabel(); updateQR()" class="w-full cursor-pointer h-1.5 bg-gray-200 rounded-lg appearance-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
+                                <span class="theme-gradient text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">3</span>
                                 <svg class="w-4 h-4 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
                                 สีสันและสไตล์
                             </h2>
@@ -261,42 +306,25 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
-                        <div>
-                            <h2 class="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
-                                <span class="theme-gradient text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">3</span>
-                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                                โลโก้แบรนด์
-                            </h2>
-                            <div class="flex flex-col gap-3">
-                                
-                                <div id="preset-logos-section" class="flex flex-col gap-1.5">
-                                    <span class="text-xs font-semibold text-gray-500">เลือกโลโก้ที่ใช้บ่อย:</span>
-                                    <div id="preset-logos-container" class="flex flex-wrap gap-2 min-h-[3rem] items-center">
-                                        <div id="preset-logos-loading" class="flex items-center gap-1.5">
-                                            <span class="spinner border-t-emerald-500 w-4 h-4 border-[2px]"></span>
-                                            <span class="text-[10px] text-gray-400">กำลังโหลด...</span>
+                                <!-- ข้อความใต้ QR -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">ข้อความใต้ QR</label>
+                                    <input type="text" id="qrCaption" placeholder="เช่น Scan Me / ชื่อหน่วยงาน" oninput="updateQR()" maxlength="60"
+                                        class="w-full text-xs px-3 py-2.5 rounded-xl border-0 ring-1 ring-gray-200 bg-white/80 outline-none font-medium focus:ring-2 focus:ring-emerald-400 transition-all">
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="flex items-center justify-between p-2 rounded-xl bg-white/50 border border-white col-span-1">
+                                            <label class="text-[10px] font-semibold text-gray-500">สี</label>
+                                            <input type="color" id="qrCaptionColor" value="#333333" onchange="updateQR()" class="w-6 h-6 rounded-full cursor-pointer border border-white ring-1 ring-gray-200">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <select id="qrCaptionSize" onchange="updateQR()" class="w-full text-xs px-3 py-2 rounded-xl border-0 ring-1 ring-gray-200 bg-white/80 outline-none appearance-none font-medium">
+                                                <option value="small">เล็ก</option>
+                                                <option value="medium" selected>กลาง</option>
+                                                <option value="large">ใหญ่</option>
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-
-                                <label for="logoInput" class="cursor-pointer bg-white text-gray-700 px-4 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow transition-all text-xs flex items-center justify-center gap-2 border border-gray-100">
-                                    <svg class="w-4 h-4 theme-text-solid" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    อัปโหลดโลโก้ด้วยตนเอง
-                                </label>
-                                <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
-                                <button onclick="removeLogo()" id="removeLogoBtn" class="hidden px-4 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-all border border-red-100">ลบโลโก้ออก</button>
-                                
-                                <div id="logo-size-container" class="hidden w-full bg-white/50 p-3 rounded-xl border border-white mt-1">
-                                    <label class="flex justify-between text-xs font-semibold text-gray-700 mb-2">
-                                        <span>ปรับขนาดโลโก้</span>
-                                        <span id="logo-size-label" class="theme-text-solid font-bold">40%</span>
-                                    </label>
-                                    <input type="range" id="logoSize" min="0.1" max="0.6" step="0.05" value="0.4" oninput="updateLogoSizeLabel(); updateQR()" class="w-full cursor-pointer h-1.5 bg-gray-200 rounded-lg appearance-none">
                                 </div>
                             </div>
                         </div>
@@ -305,18 +333,25 @@
             </div>
 
             <!-- QR Preview Panel -->
-            <div class="lg:w-1/4">
-                <div class="sticky top-20 glass-card rounded-2xl p-3 sm:p-4 flex flex-col items-center shadow-xl border-white">
+            <div class="lg:w-1/4 flex justify-center">
+                <div class="sticky top-20 glass-card rounded-2xl p-3 sm:p-4 flex flex-col items-center shadow-xl border-white mx-auto">
                     <div class="w-full border-b border-gray-100 pb-2 mb-3">
                         <h2 class="text-sm font-bold text-gray-800 text-center">พรีวิว QR Code</h2>
                     </div>
-                    <!-- [ข้อ 3] ลด padding และกำหนดขนาด max-w ให้พอดีกับพื้นที่ -->
-                    <div id="canvas-container" class="bg-white p-2 sm:p-3 rounded-xl shadow-inner border border-gray-100 mb-3 w-full max-w-[220px] sm:max-w-[240px] lg:max-w-full aspect-square relative flex items-center justify-center transition-all hover:scale-[1.02] duration-300">
-                        <div id="qr-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-                            <svg class="w-8 h-8 mb-1 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                            <span class="text-[10px] font-medium">รอการกรอกข้อมูล...</span>
+                    <!-- QR Preview Container — QR + caption ในกล่องขาวเดียวกัน เหมือน PNG -->
+                    <div id="canvas-container" class="bg-white rounded-xl shadow-inner border border-gray-100 mb-3 w-full max-w-[220px] sm:max-w-[240px] lg:max-w-full relative flex flex-col items-center justify-center transition-all hover:scale-[1.02] duration-300 overflow-hidden">
+                        <!-- QR area -->
+                        <div class="relative w-full aspect-square flex items-center justify-center p-2 sm:p-3">
+                            <div id="qr-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                                <svg class="w-8 h-8 mb-1 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                <span class="text-[10px] font-medium">รอการกรอกข้อมูล...</span>
+                            </div>
+                            <div id="qr-code-wrapper" class="relative z-10 w-full h-full flex justify-center items-center"></div>
                         </div>
-                        <div id="qr-code-wrapper" class="relative z-10 w-full h-full flex justify-center items-center"></div>
+                        <!-- Caption: ชิดใต้ QR ในกล่องขาวเดียวกัน ไม่มี gap -->
+                        <div id="qr-caption-preview-row" class="hidden w-full text-center px-3 pb-3" style="margin-top:-4px;">
+                            <span id="qr-caption-preview-text" class="font-semibold" style="font-family:Sarabun,sans-serif;font-size:13px;color:#333;"></span>
+                        </div>
                     </div>
                     
                     <div class="w-full space-y-2">
@@ -627,7 +662,7 @@
                 var btnMobile = document.getElementById('auth-btn');
                 var btnDesktop = document.getElementById('auth-btn-desktop');
                 if (btnMobile) {
-                    btnMobile.innerText = 'เข้าสู่ระบบ';
+                    btnMobile.innerText = 'ADMIN';
                     btnMobile.classList.replace('text-red-500', 'text-emerald-600');
                 }
                 if (btnDesktop) {
@@ -635,7 +670,7 @@
                     btnDesktop.classList.replace('text-red-600', 'text-emerald-700');
                     btnDesktop.classList.replace('border-red-100', 'border-emerald-100');
                     btnDesktop.classList.replace('hover:bg-red-100', 'hover:bg-emerald-100');
-                    btnDesktop.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg><span>เข้าสู่ระบบ</span>';
+                    btnDesktop.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg><span>ADMIN</span>';
                 }
                 applyGuestMode();
                 Toast.fire({ icon: 'info', title: 'ออกจากระบบเรียบร้อย' });
@@ -807,6 +842,10 @@
             var qrColorLight = document.getElementById('qrColorLight').value;
             var dotsType = document.getElementById('dotsType').value;
             var logoSize = parseFloat(document.getElementById('logoSize').value);
+            var caption = document.getElementById('qrCaption') ? document.getElementById('qrCaption').value.trim() : '';
+            var captionColor = document.getElementById('qrCaptionColor') ? document.getElementById('qrCaptionColor').value : '#333333';
+            var captionSize = document.getElementById('qrCaptionSize') ? document.getElementById('qrCaptionSize').value : 'medium';
+
             qrCode.update({ 
                 data: safeData, image: uploadedLogo || "", dotsOptions: { color: qrColorDark, type: dotsType }, 
                 backgroundOptions: { color: qrColorLight }, cornersSquareOptions: { type: cornersType, color: qrColorDark }, 
@@ -814,7 +853,59 @@
                 imageOptions: { crossOrigin: "anonymous", margin: 2, imageSize: logoSize } 
             });
             qrCode.append(wrapper);
+
+            // แสดง caption ใน preview — sync เหมือน PNG export
+            if (caption) {
+                setTimeout(function() {
+                    var row = document.getElementById('qr-caption-preview-row');
+                    var txt = document.getElementById('qr-caption-preview-text');
+                    var sizeMap = { small: '11px', medium: '14px', large: '17px' };
+                    txt.style.fontSize = sizeMap[captionSize] || '14px';
+                    txt.style.color = captionColor;
+                    txt.style.fontFamily = 'Sarabun, sans-serif';
+                    txt.textContent = caption;
+                    // sync background ให้เหมือนพื้น QR
+                    row.style.backgroundColor = qrColorLight;
+                    txt.style.backgroundColor = qrColorLight;
+                    row.classList.remove('hidden');
+                }, 120);
+            } else {
+                setTimeout(function() {
+                    var row = document.getElementById('qr-caption-preview-row');
+                    if (row) row.classList.add('hidden');
+                }, 120);
+            }
+
             if (isTracking && data) document.getElementById('tracking-notice').classList.remove('hidden'); else document.getElementById('tracking-notice').classList.add('hidden');
+        }
+
+        // helper: สร้าง canvas รวม QR + caption สำหรับ export
+        function buildExportCanvas(qrStylingInstance, size, caption, captionColor, captionSize, bgColor, callback) {
+            if (!caption) { callback(null); return; }
+            var fontPxMap = { small: Math.round(size * 0.038), medium: Math.round(size * 0.052), large: Math.round(size * 0.068) };
+            var fontPx = fontPxMap[captionSize] || Math.round(size * 0.052);
+            var padding = Math.round(fontPx * 1.8);
+            qrStylingInstance.getRawData("png").then(function(blob) {
+                var img = new Image();
+                var url = URL.createObjectURL(blob);
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size + padding;
+                    var ctx = canvas.getContext('2d');
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, size, size);
+                    ctx.fillStyle = captionColor;
+                    ctx.font = 'bold ' + fontPx + 'px Sarabun, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(caption, size / 2, size + padding / 2);
+                    URL.revokeObjectURL(url);
+                    callback(canvas);
+                };
+                img.src = url;
+            });
         }
 
         // ==========================================
@@ -828,6 +919,9 @@
             var dotsType = document.getElementById('dotsType').value;
             var cornersType = document.getElementById('cornersType').value;
             var logoSize = parseFloat(document.getElementById('logoSize').value);
+            var caption = document.getElementById('qrCaption') ? document.getElementById('qrCaption').value.trim() : '';
+            var captionColor = document.getElementById('qrCaptionColor') ? document.getElementById('qrCaptionColor').value : '#333333';
+            var captionSize = document.getElementById('qrCaptionSize') ? document.getElementById('qrCaptionSize').value : 'medium';
             var safeData = dataToLog || "";
             try { safeData = unescape(encodeURIComponent(safeData)); } catch(e) {}
 
@@ -848,8 +942,19 @@
                 cornersDotOptions: { type: (cornersType === 'square' ? 'square' : 'dot'), color: qrColorDark },
                 imageOptions: { crossOrigin: "anonymous", margin: Math.round(downloadSize * 0.008), imageSize: logoSize }
             });
-            downloadQR.download({ name: "QR_" + Date.now(), extension: 'png' });
-            Toast.fire({ icon: 'success', title: 'ดาวน์โหลดสำเร็จ (' + downloadSize + 'x' + downloadSize + 'px)' });
+
+            if (caption) {
+                buildExportCanvas(downloadQR, downloadSize, caption, captionColor, captionSize, qrColorLight, function(canvas) {
+                    var link = document.createElement('a');
+                    link.download = "QR_" + Date.now() + ".png";
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    Toast.fire({ icon: 'success', title: 'ดาวน์โหลดสำเร็จ (พร้อมข้อความ)' });
+                });
+            } else {
+                downloadQR.download({ name: "QR_" + Date.now(), extension: 'png' });
+                Toast.fire({ icon: 'success', title: 'ดาวน์โหลดสำเร็จ (' + downloadSize + 'x' + downloadSize + 'px)' });
+            }
         }
 
         // ==========================================
@@ -871,6 +976,9 @@
             var dotsType = document.getElementById('dotsType').value;
             var cornersType = document.getElementById('cornersType').value;
             var logoSize = parseFloat(document.getElementById('logoSize').value);
+            var caption = document.getElementById('qrCaption') ? document.getElementById('qrCaption').value.trim() : '';
+            var captionColor = document.getElementById('qrCaptionColor') ? document.getElementById('qrCaptionColor').value : '#333333';
+            var captionSize = document.getElementById('qrCaptionSize') ? document.getElementById('qrCaptionSize').value : 'medium';
             var safeData = dataToLog || "";
             try { safeData = unescape(encodeURIComponent(safeData)); } catch(e) {}
 
@@ -884,9 +992,19 @@
                 imageOptions: { crossOrigin: "anonymous", margin: Math.round(downloadSize * 0.008), imageSize: logoSize }
             });
 
-            // Step 1: ดาวน์โหลดไฟล์ PNG ก่อนทันที
-            saveQR.download({ name: "QR_" + Date.now(), extension: 'png' });
-            Toast.fire({ icon: 'success', title: 'กำลังดาวน์โหลด PNG...' });
+            // Step 1: ดาวน์โหลดไฟล์ PNG ก่อนทันที (รวม caption ถ้ามี)
+            if (caption) {
+                buildExportCanvas(saveQR, downloadSize, caption, captionColor, captionSize, qrColorLight, function(canvas) {
+                    var link = document.createElement('a');
+                    link.download = "QR_" + Date.now() + ".png";
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    Toast.fire({ icon: 'success', title: 'กำลังดาวน์โหลด PNG (พร้อมข้อความ)...' });
+                });
+            } else {
+                saveQR.download({ name: "QR_" + Date.now(), extension: 'png' });
+                Toast.fire({ icon: 'success', title: 'กำลังดาวน์โหลด PNG...' });
+            }
 
             // Step 2: บันทึก Drive + บันทึกประวัติ
             Swal.fire({ title: 'กำลังบันทึกลง Drive...', html: 'กรุณารอสักครู่ ระบบกำลังสร้างโฟลเดอร์', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
